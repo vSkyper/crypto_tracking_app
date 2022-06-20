@@ -14,12 +14,13 @@ class MyApp extends StatelessWidget {
       title: 'Food recipe',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-          scaffoldBackgroundColor: const Color(0xFF18181B),
-          primaryColor: const Color(0xFF18181B),
-          textTheme: const TextTheme(
-            bodyText2: TextStyle(color: Colors.white),
-          )),
-      home: HomePage(),
+        scaffoldBackgroundColor: const Color(0xFF18181B),
+        primaryColor: const Color(0xFF18181B),
+        textTheme: const TextTheme(
+          bodyText2: TextStyle(color: Colors.white),
+        ),
+      ),
+      home: const HomePage(),
     );
   }
 }
