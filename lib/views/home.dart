@@ -1,3 +1,5 @@
+import 'package:crypto_tracking_app/models/coins.api.dart';
+import 'package:crypto_tracking_app/models/coins.dart';
 import 'package:crypto_tracking_app/models/global_data.api.dart';
 import 'package:crypto_tracking_app/models/global_data.dart';
 import 'package:crypto_tracking_app/views/widgets/coin_card.dart';
@@ -13,17 +15,19 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late GlobalData _globalData;
+  late List<Coins> _coins;
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
 
-    getGlobalData();
+    fetchData();
   }
 
-  Future<void> getGlobalData() async {
+  Future<void> fetchData() async {
     _globalData = await GlobalDataApi.getGlobalData();
+    _coins = await CoinsApi.getCoins();
     setState(() {
       _isLoading = false;
     });
@@ -56,7 +60,21 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 children: [
                   GlobalDataWidget(globalData: _globalData),
-                  CoinCard()
+                  const SizedBox(height: 20),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: _coins.length,
+                      itemBuilder: (context, index) {
+                        return CoinCard(
+                            name: _coins[index].name,
+                            symbol: _coins[index].symbol,
+                            currentPrice: _coins[index].currentPrice,
+                            priceChangePercentage24h:
+                                _coins[index].priceChangePercentage24h,
+                            image: _coins[index].image);
+                      },
+                    ),
+                  ),
                 ],
               ),
             ),

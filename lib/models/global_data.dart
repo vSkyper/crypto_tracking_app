@@ -1,9 +1,9 @@
 class GlobalData {
-  final double totalMarketCapInUsd;
-  final double marketCapChangePercentage24h;
-  final double totalVolumeInUsd;
-  final double marketCapPercentageBtc;
-  final double marketCapPercentageEth;
+  final num totalMarketCapInUsd;
+  final num marketCapChangePercentage24h;
+  final num totalVolumeInUsd;
+  final num marketCapPercentageBtc;
+  final num marketCapPercentageEth;
   final int activeCryptocurrencies;
 
   GlobalData({
@@ -17,11 +17,11 @@ class GlobalData {
 
   factory GlobalData.fromJson(dynamic json) {
     return GlobalData(
-      totalMarketCapInUsd: json['total_market_cap']['usd'] as double,
-      marketCapChangePercentage24h: json['market_cap_change_percentage_24h_usd'] as double,
-      totalVolumeInUsd: json['total_volume']['usd'] as double,
-      marketCapPercentageBtc: json['market_cap_percentage']['btc'] as double,
-      marketCapPercentageEth: json['market_cap_percentage']['eth'] as double,
+      totalMarketCapInUsd: json['total_market_cap']['usd'] as num,
+      marketCapChangePercentage24h: json['market_cap_change_percentage_24h_usd'] as num,
+      totalVolumeInUsd: json['total_volume']['usd'] as num,
+      marketCapPercentageBtc: json['market_cap_percentage']['btc'] as num,
+      marketCapPercentageEth: json['market_cap_percentage']['eth'] as num,
       activeCryptocurrencies: json['active_cryptocurrencies'] as int,
     );
   }
