@@ -1,4 +1,5 @@
 class Coins {
+  final String id;
   final String name;
   final String symbol;
   final num currentPrice;
@@ -6,6 +7,7 @@ class Coins {
   final String image;
 
   Coins({
+    required this.id,
     required this.name,
     required this.symbol,
     required this.currentPrice,
@@ -15,6 +17,7 @@ class Coins {
 
   factory Coins.fromJson(dynamic json) {
     return Coins(
+      id: json['id'] as String,
       name: json['name'] as String,
       symbol: json['symbol'] as String,
       currentPrice: json['current_price'] as num,

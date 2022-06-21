@@ -2,6 +2,7 @@ import 'package:crypto_tracking_app/views/coin.dart';
 import 'package:flutter/material.dart';
 
 class CoinCard extends StatelessWidget {
+  final String id;
   final String name;
   final String symbol;
   final num currentPrice;
@@ -10,6 +11,7 @@ class CoinCard extends StatelessWidget {
 
   const CoinCard({
     Key? key,
+    required this.id,
     required this.name,
     required this.symbol,
     required this.currentPrice,
@@ -22,7 +24,9 @@ class CoinCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => const Coin()),
+          MaterialPageRoute(
+              builder: (context) =>
+                  CoinWidget(id: id, name: name, image: image)),
         );
       },
       child: Container(

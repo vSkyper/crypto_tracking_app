@@ -69,6 +69,7 @@ class _HomePageState extends State<HomePage> {
                 itemCount: _coins.length,
                 itemBuilder: (context, index) {
                   var coinCard = CoinCard(
+                      id: _coins[index].id,
                       name: _coins[index].name,
                       symbol: _coins[index].symbol,
                       currentPrice: _coins[index].currentPrice,
