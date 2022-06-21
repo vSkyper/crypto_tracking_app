@@ -1,3 +1,4 @@
+import 'package:crypto_tracking_app/views/coin.dart';
 import 'package:flutter/material.dart';
 
 class CoinCard extends StatelessWidget {
@@ -18,59 +19,68 @@ class CoinCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 25),
-      child: Stack(
-        children: [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Row(
-              children: [
-                Image.network(
-                    image,
-                    width: 30,
-                    height: 30),
-                const SizedBox(width: 7),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(name),
-                    Text(
-                      symbol.toUpperCase(),
-                      style: const TextStyle(
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w200,
-                          fontSize: 12),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          Align(
-            alignment: Alignment.centerRight,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text('\$$currentPrice'),
-                const SizedBox(height: 3),
-                Text.rich(
-                  TextSpan(
-                    text: '24h: ',
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const Coin()),
+        );
+      },
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        margin: const EdgeInsets.only(bottom: 25),
+        decoration: const BoxDecoration(),
+        child: Stack(
+          children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Row(
+                children: [
+                  Image.network(image, width: 30, height: 30),
+                  const SizedBox(width: 7),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      TextSpan(
-                        text: '${priceChangePercentage24h.toStringAsFixed(2)}%',
-                        style: TextStyle(
-                          color: (priceChangePercentage24h < 0 ? Colors.red : Colors.green),
-                        ),
+                      Text(name),
+                      Text(
+                        symbol.toUpperCase(),
+                        style: const TextStyle(
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w200,
+                            fontSize: 12),
                       ),
                     ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+            Align(
+              alignment: Alignment.centerRight,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text('\$$currentPrice'),
+                  const SizedBox(height: 3),
+                  Text.rich(
+                    TextSpan(
+                      text: '24h: ',
+                      children: [
+                        TextSpan(
+                          text:
+                              '${priceChangePercentage24h.toStringAsFixed(2)}%',
+                          style: TextStyle(
+                            color: (priceChangePercentage24h < 0
+                                ? Colors.red
+                                : Colors.green),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'package:crypto_tracking_app/models/coins.api.dart';
 import 'package:crypto_tracking_app/models/coins.dart';
 import 'package:crypto_tracking_app/models/global_data.api.dart';
 import 'package:crypto_tracking_app/models/global_data.dart';
+import 'package:crypto_tracking_app/views/favorite_coins.dart';
 import 'package:crypto_tracking_app/views/widgets/coin_card.dart';
 import 'package:crypto_tracking_app/views/widgets/global_data_widget.dart';
 import 'package:flutter/material.dart';
@@ -41,8 +42,14 @@ class _HomePageState extends State<HomePage> {
         elevation: 0,
         actions: [
           IconButton(
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
             icon: const Icon(Icons.favorite, color: Colors.red),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const FavoriteCoins()),
+              );
+            },
           ),
         ],
         title: Row(
@@ -57,25 +64,30 @@ class _HomePageState extends State<HomePage> {
           ? const Center(child: CircularProgressIndicator())
           : Padding(
               padding: const EdgeInsets.only(left: 15, right: 15),
-              child: Column(
-                children: [
-                  GlobalDataWidget(globalData: _globalData),
-                  const SizedBox(height: 20),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: _coins.length,
-                      itemBuilder: (context, index) {
-                        return CoinCard(
-                            name: _coins[index].name,
-                            symbol: _coins[index].symbol,
-                            currentPrice: _coins[index].currentPrice,
-                            priceChangePercentage24h:
-                                _coins[index].priceChangePercentage24h,
-                            image: _coins[index].image);
-                      },
-                    ),
-                  ),
-                ],
+              child: ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                itemCount: _coins.length,
+                itemBuilder: (context, index) {
+                  var coinCard = CoinCard(
+                      name: _coins[index].name,
+                      symbol: _coins[index].symbol,
+                      currentPrice: _coins[index].currentPrice,
+                      priceChangePercentage24h:
+                          _coins[index].priceChangePercentage24h,
+                      image: _coins[index].image);
+
+                  if (index == 0) {
+                    return Column(
+                      children: [
+                        GlobalDataWidget(globalData: _globalData),
+                        const SizedBox(height: 20),
+                        coinCard
+                      ],
+                    );
+                  }
+
+                  return coinCard;
+                },
               ),
             ),
     );

@@ -18,7 +18,8 @@ class GlobalData {
   factory GlobalData.fromJson(dynamic json) {
     return GlobalData(
       totalMarketCapInUsd: json['total_market_cap']['usd'] as num,
-      marketCapChangePercentage24h: json['market_cap_change_percentage_24h_usd'] as num,
+      marketCapChangePercentage24h:
+          json['market_cap_change_percentage_24h_usd'] as num,
       totalVolumeInUsd: json['total_volume']['usd'] as num,
       marketCapPercentageBtc: json['market_cap_percentage']['btc'] as num,
       marketCapPercentageEth: json['market_cap_percentage']['eth'] as num,
@@ -27,6 +28,6 @@ class GlobalData {
   }
 
   static GlobalData globalDataFromSnapshot(dynamic snapshot) {
-      return GlobalData.fromJson(snapshot);
+    return GlobalData.fromJson(snapshot);
   }
 }
