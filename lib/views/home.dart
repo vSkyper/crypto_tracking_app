@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:crypto_tracking_app/models/coins.api.dart';
 import 'package:crypto_tracking_app/models/coins.dart';
 import 'package:crypto_tracking_app/models/global_data.api.dart';
@@ -8,7 +6,6 @@ import 'package:crypto_tracking_app/views/favorite_coins.dart';
 import 'package:crypto_tracking_app/views/widgets/coin_card.dart';
 import 'package:crypto_tracking_app/views/widgets/global_data_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -20,7 +17,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late GlobalData _globalData;
   late List<Coins> _coins;
-  late List<String> _favoriteCoins;
   bool _isLoading = true;
 
   @override
@@ -33,15 +29,6 @@ class _HomePageState extends State<HomePage> {
   Future<void> fetchData() async {
     _globalData = await GlobalDataApi.getGlobalData();
     _coins = await CoinsApi.getCoins();
-
-    final prefs = await SharedPreferences.getInstance();
-    final List<String>? favoriteCoins = prefs.getStringList('favoriteCoins');
-
-    if (favoriteCoins != null) {
-      _favoriteCoins = favoriteCoins;
-    } else {
-      _favoriteCoins = [];
-    }
 
     setState(() {
       _isLoading = false;
@@ -60,13 +47,13 @@ class _HomePageState extends State<HomePage> {
             highlightColor: Colors.transparent,
             icon: const Icon(Icons.favorite, color: Colors.red),
             onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                    builder: (context) => FavoriteCoins(
-                        coins: _coins
-                            .where((item) => _favoriteCoins.contains(item.id))
-                            .toList())),
-              );
+              if (!_isLoading) {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => FavoriteCoins(coins: _coins),
+                  ),
+                );
+              }
             },
           ),
         ],

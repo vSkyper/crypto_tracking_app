@@ -37,11 +37,10 @@ class _CoinWidgetState extends State<CoinWidget> {
     final prefs = await SharedPreferences.getInstance();
     final List<String>? favoriteCoins = prefs.getStringList('favoriteCoins');
 
-    if (favoriteCoins != null) {
-      _isFav = favoriteCoins.contains(widget.id);
-    }
-
     setState(() {
+      if (favoriteCoins != null) {
+        _isFav = favoriteCoins.contains(widget.id);
+      }
       _isLoading = false;
     });
   }
