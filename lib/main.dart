@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: const Color(0xFF18181B),
         primaryColor: const Color(0xFF18181B),
         textTheme: const TextTheme(
-          bodyText2: TextStyle(color: Colors.white),
+          bodyText2: TextStyle(color: Colors.white, fontSize: 15),
         ),
       ),
       home: const HomePage(),

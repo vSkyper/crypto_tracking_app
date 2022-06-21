@@ -1,5 +1,6 @@
 import 'package:crypto_tracking_app/models/global_data.api.dart';
 import 'package:crypto_tracking_app/models/global_data.dart';
+import 'package:crypto_tracking_app/views/widgets/coin_card.dart';
 import 'package:crypto_tracking_app/views/widgets/global_data_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -34,13 +35,17 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF18181B),
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.favorite, color: Colors.red),
+            onPressed: () {},
+          ),
+        ],
         title: Row(
           children: const [
             Icon(Icons.euro),
             SizedBox(width: 10),
             Text('Cryptocurrency'),
-            Spacer(),
-            Icon(Icons.favorite, color: Colors.red),
           ],
         ),
       ),
@@ -50,7 +55,8 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.only(left: 15, right: 15),
               child: Column(
                 children: [
-                  GlobalDataWidget(globalData: _globalData)
+                  GlobalDataWidget(globalData: _globalData),
+                  CoinCard()
                 ],
               ),
             ),

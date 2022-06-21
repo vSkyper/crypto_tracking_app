@@ -12,9 +12,9 @@ class GlobalDataWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RichText(
-      text: TextSpan(
-        style: const TextStyle(height: 1.5),
+    return Text.rich(
+      TextSpan(
+        style: const TextStyle(height: 1.5, fontSize: 15.5),
         children: [
           TextSpan(
               text:
