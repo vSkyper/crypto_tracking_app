@@ -13,7 +13,6 @@ class FavoriteCoins extends StatefulWidget {
 }
 
 class _FavoriteCoinsState extends State<FavoriteCoins> {
-  late List<String> _favoriteCoinsId;
   late List<Coins> _favoriteCoins;
   bool _isLoading = true;
 
@@ -28,17 +27,17 @@ class _FavoriteCoinsState extends State<FavoriteCoins> {
     final prefs = await SharedPreferences.getInstance();
     final List<String>? favoriteCoins = prefs.getStringList('favoriteCoins');
 
+    List<String> favoriteCoinsId = [];
     if (favoriteCoins != null) {
-      _favoriteCoinsId = favoriteCoins;
-    } else {
-      _favoriteCoinsId = [];
+      favoriteCoinsId = favoriteCoins;
     }
+
+    _favoriteCoins = widget.coins
+        .where((item) => favoriteCoinsId.contains(item.id))
+        .toList();
 
     setState(() {
       _isLoading = false;
-      _favoriteCoins = widget.coins
-          .where((item) => _favoriteCoinsId.contains(item.id))
-          .toList();
     });
   }
 
