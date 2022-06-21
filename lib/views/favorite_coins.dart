@@ -25,16 +25,12 @@ class _FavoriteCoinsState extends State<FavoriteCoins> {
 
   Future<void> fetchData() async {
     final prefs = await SharedPreferences.getInstance();
-    final List<String>? favoriteCoins = prefs.getStringList('favoriteCoins');
+    List<String>? favoriteCoins = prefs.getStringList('favoriteCoins');
 
-    List<String> favoriteCoinsId = [];
-    if (favoriteCoins != null) {
-      favoriteCoinsId = favoriteCoins;
-    }
+    favoriteCoins ??= [];
 
-    _favoriteCoins = widget.coins
-        .where((item) => favoriteCoinsId.contains(item.id))
-        .toList();
+    _favoriteCoins =
+        widget.coins.where((item) => favoriteCoins!.contains(item.id)).toList();
 
     setState(() {
       _isLoading = false;
