@@ -22,7 +22,7 @@ class CoinCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final formatter = NumberFormat();
+    final formatter = NumberFormat.currency(symbol: '\$');
 
     return GestureDetector(
       onTap: () {
@@ -65,7 +65,7 @@ class CoinCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text('\$${formatter.format(currentPrice)}'),
+                  Text(formatter.format(currentPrice)),
                   const SizedBox(height: 3),
                   Text.rich(
                     TextSpan(
