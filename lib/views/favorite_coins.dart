@@ -1,72 +1,54 @@
 import 'package:crypto_tracking_app/models/coins.dart';
+import 'package:crypto_tracking_app/models/favorite_coins_list_model.dart';
 import 'package:crypto_tracking_app/views/widgets/coin_card.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 
-class FavoriteCoins extends StatefulWidget {
+class FavoriteCoins extends StatelessWidget {
   final List<Coins> coins;
 
-  const FavoriteCoins({Key? key, required this.coins}) : super(key: key);
-
-  @override
-  State<FavoriteCoins> createState() => _FavoriteCoinsState();
-}
-
-class _FavoriteCoinsState extends State<FavoriteCoins> {
-  late List<Coins> _favoriteCoins;
-  bool _isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-
-    fetchData();
-  }
-
-  Future<void> fetchData() async {
-    final prefs = await SharedPreferences.getInstance();
-    List<String>? favoriteCoins = prefs.getStringList('favoriteCoins');
-
-    favoriteCoins ??= [];
-
-    _favoriteCoins =
-        widget.coins.where((item) => favoriteCoins!.contains(item.id)).toList();
-
-    setState(() {
-      _isLoading = false;
-    });
-  }
+  const FavoriteCoins({
+    Key? key,
+    required this.coins,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF18181B),
-        elevation: 0,
-      ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.only(left: 15, right: 15),
-              child: _favoriteCoins.isEmpty
-                  ? const Align(
-                      alignment: Alignment.topCenter,
-                      child: Text('You don\'t have any favorite coins :('))
-                  : ListView.builder(
-                      physics: const BouncingScrollPhysics(),
-                      itemCount: _favoriteCoins.length,
-                      itemBuilder: (context, index) {
-                        return CoinCard(
-                            id: _favoriteCoins[index].id,
-                            name: _favoriteCoins[index].name,
-                            symbol: _favoriteCoins[index].symbol,
-                            currentPrice: _favoriteCoins[index].currentPrice,
-                            priceChangePercentage24h:
-                                _favoriteCoins[index].priceChangePercentage24h,
-                            image: _favoriteCoins[index].image);
-                      },
-                    ),
-            ),
+    return Consumer<FavoriteCoinsListModel>(
+      builder: (context, model, child) {
+        List<String> favoriteCoinsId = model.favoriteCoins;
+
+        List<Coins> favoriteCoins =
+            coins.where((item) => favoriteCoinsId.contains(item.id)).toList();
+
+        return Scaffold(
+          appBar: AppBar(
+            backgroundColor: const Color(0xFF18181B),
+            elevation: 0,
+          ),
+          body: Padding(
+            padding: const EdgeInsets.only(left: 15, right: 15),
+            child: favoriteCoins.isEmpty
+                ? const Align(
+                    alignment: Alignment.topCenter,
+                    child: Text('You don\'t have any favorite coins :('))
+                : ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: favoriteCoins.length,
+                    itemBuilder: (context, index) {
+                      return CoinCard(
+                          id: favoriteCoins[index].id,
+                          name: favoriteCoins[index].name,
+                          symbol: favoriteCoins[index].symbol,
+                          currentPrice: favoriteCoins[index].currentPrice,
+                          priceChangePercentage24h:
+                              favoriteCoins[index].priceChangePercentage24h,
+                          image: favoriteCoins[index].image);
+                    },
+                  ),
+          ),
+        );
+      },
     );
   }
 }

@@ -1,7 +1,8 @@
 import 'package:crypto_tracking_app/models/coin.api.dart';
 import 'package:crypto_tracking_app/models/coin.dart';
+import 'package:crypto_tracking_app/models/favorite_coins_list_model.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 
 class CoinWidget extends StatefulWidget {
   final String id;
@@ -34,38 +35,19 @@ class _CoinWidgetState extends State<CoinWidget> {
   Future<void> fetchData() async {
     _coin = await CoinApi.getCoin(widget.id);
 
-    final prefs = await SharedPreferences.getInstance();
-    final List<String>? favoriteCoins = prefs.getStringList('favoriteCoins');
-
     setState(() {
-      if (favoriteCoins != null) {
-        _isFav = favoriteCoins.contains(widget.id);
-      }
       _isLoading = false;
-    });
-  }
-
-  Future<void> _toggleFavorite() async {
-    final prefs = await SharedPreferences.getInstance();
-    List<String>? favoriteCoins = prefs.getStringList('favoriteCoins');
-
-    favoriteCoins ??= [];
-
-    if (favoriteCoins.contains(widget.id)) {
-      favoriteCoins.remove(widget.id);
-    } else {
-      favoriteCoins.add(widget.id);
-    }
-
-    prefs.setStringList('favoriteCoins', favoriteCoins);
-
-    setState(() {
-      _isFav = !_isFav;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final model = Provider.of<FavoriteCoinsListModel>(context);
+    List<String> favoriteCoins = model.favoriteCoins;
+    setState(() {
+      _isFav = favoriteCoins.contains(widget.id);
+    });
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF18181B),
@@ -76,7 +58,7 @@ class _CoinWidgetState extends State<CoinWidget> {
             icon: Icon(_isFav ? Icons.favorite : Icons.favorite_border,
                 color: Colors.red),
             onPressed: () {
-              _toggleFavorite();
+              model.toggleFavorite(widget.id);
             },
           ),
         ],

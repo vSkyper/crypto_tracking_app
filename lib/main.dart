@@ -1,8 +1,15 @@
+import 'package:crypto_tracking_app/models/favorite_coins_list_model.dart';
 import 'package:crypto_tracking_app/views/home.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider<FavoriteCoinsListModel>(
+      create: (_) => FavoriteCoinsListModel(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
