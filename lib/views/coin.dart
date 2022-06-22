@@ -1,6 +1,7 @@
 import 'package:crypto_tracking_app/models/coin.api.dart';
 import 'package:crypto_tracking_app/models/coin.dart';
 import 'package:crypto_tracking_app/models/favorite_coins_list_model.dart';
+import 'package:crypto_tracking_app/views/favorite_coins.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -22,7 +23,6 @@ class CoinWidget extends StatefulWidget {
 
 class _CoinWidgetState extends State<CoinWidget> {
   late Coin _coin;
-  bool _isFav = false;
   bool _isLoading = true;
 
   @override
@@ -42,12 +42,9 @@ class _CoinWidgetState extends State<CoinWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final model = Provider.of<FavoriteCoinsListModel>(context);
-    List<String> favoriteCoins = model.getFavoriteCoins();
-
-    setState(() {
-      _isFav = favoriteCoins.contains(widget.id);
-    });
+    var isFav = context.select<FavoriteCoinsListModel, bool>(
+      (favoriteCoins) => favoriteCoins.getFavoriteCoins().contains(widget.id),
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -56,9 +53,10 @@ class _CoinWidgetState extends State<CoinWidget> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(_isFav ? Icons.favorite : Icons.favorite_border,
+            icon: Icon(isFav ? Icons.favorite : Icons.favorite_border,
                 color: Colors.red),
             onPressed: () {
+              var model = context.read<FavoriteCoinsListModel>();
               model.toggleFavorite(widget.id);
             },
           ),

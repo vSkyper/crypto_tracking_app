@@ -14,41 +14,38 @@ class FavoriteCoins extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<FavoriteCoinsListModel>(
-      builder: (context, model, child) {
-        List<String> favoriteCoinsId = model.getFavoriteCoins();
+    var model = context.watch<FavoriteCoinsListModel>();
 
-        List<Coins> favoriteCoins =
-            coins.where((item) => favoriteCoinsId.contains(item.id)).toList();
+    List<Coins> favoriteCoins = coins
+        .where((item) => model.getFavoriteCoins().contains(item.id))
+        .toList();
 
-        return Scaffold(
-          appBar: AppBar(
-            backgroundColor: const Color(0xFF18181B),
-            elevation: 0,
-          ),
-          body: Padding(
-            padding: const EdgeInsets.only(left: 15, right: 15),
-            child: favoriteCoins.isEmpty
-                ? const Align(
-                    alignment: Alignment.topCenter,
-                    child: Text('You don\'t have any favorite coins :('))
-                : ListView.builder(
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: favoriteCoins.length,
-                    itemBuilder: (context, index) {
-                      return CoinCard(
-                          id: favoriteCoins[index].id,
-                          name: favoriteCoins[index].name,
-                          symbol: favoriteCoins[index].symbol,
-                          currentPrice: favoriteCoins[index].currentPrice,
-                          priceChangePercentage24h:
-                              favoriteCoins[index].priceChangePercentage24h,
-                          image: favoriteCoins[index].image);
-                    },
-                  ),
-          ),
-        );
-      },
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF18181B),
+        elevation: 0,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.only(left: 15, right: 15),
+        child: favoriteCoins.isEmpty
+            ? const Align(
+                alignment: Alignment.topCenter,
+                child: Text('You don\'t have any favorite coins :('))
+            : ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                itemCount: favoriteCoins.length,
+                itemBuilder: (context, index) {
+                  return CoinCard(
+                      id: favoriteCoins[index].id,
+                      name: favoriteCoins[index].name,
+                      symbol: favoriteCoins[index].symbol,
+                      currentPrice: favoriteCoins[index].currentPrice,
+                      priceChangePercentage24h:
+                          favoriteCoins[index].priceChangePercentage24h,
+                      image: favoriteCoins[index].image);
+                },
+              ),
+      ),
     );
   }
 }
