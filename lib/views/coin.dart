@@ -1,8 +1,8 @@
 import 'package:crypto_tracking_app/models/coin.api.dart';
 import 'package:crypto_tracking_app/models/coin.dart';
 import 'package:crypto_tracking_app/models/favorite_coins_list_model.dart';
-import 'package:crypto_tracking_app/views/favorite_coins.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class CoinWidget extends StatefulWidget {
@@ -46,6 +46,8 @@ class _CoinWidgetState extends State<CoinWidget> {
       (favoriteCoins) => favoriteCoins.getFavoriteCoins().contains(widget.id),
     );
 
+    final formatter = NumberFormat();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF18181B),
@@ -72,8 +74,92 @@ class _CoinWidgetState extends State<CoinWidget> {
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Center(
-              child: Text(_coin.price.toString()),
+          : Padding(
+              padding: const EdgeInsets.only(left: 15, right: 15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Current Price:'),
+                  const SizedBox(height: 5),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text('\$${_coin.price}',
+                          style: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold)),
+                      const SizedBox(width: 7),
+                      Text(
+                        '${_coin.priceChangePercentage24h.toStringAsFixed(2)}%',
+                        style: TextStyle(
+                          color: (_coin.priceChangePercentage24h < 0
+                              ? Colors.red
+                              : Colors.green),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        Stack(
+                          children: [
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text('Market Capitalization'),
+                            ),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: Text(
+                                  '\$${formatter.format(_coin.marketCap)}'),
+                            ),
+                          ],
+                        ),
+                        const Divider(color: Colors.grey),
+                        Stack(
+                          children: [
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text('24h Trading Volume'),
+                            ),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: Text(
+                                  '\$${formatter.format(_coin.totalVolume)}'),
+                            ),
+                          ],
+                        ),
+                        const Divider(color: Colors.grey),
+                        Stack(
+                          children: [
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text('Volume / Market Cap'),
+                            ),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: Text(formatter.format(_coin.totalVolume / _coin.marketCap)),
+                            ),
+                          ],
+                        ),
+                        const Divider(color: Colors.grey),
+                        Stack(
+                          children: [
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text('24h Low / 24h High'),
+                            ),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: Text('\$${formatter.format(_coin.low)} / \$${formatter.format(_coin.high)}'),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:crypto_tracking_app/views/coin.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class CoinCard extends StatelessWidget {
   final String id;
@@ -21,6 +22,8 @@ class CoinCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final formatter = NumberFormat();
+
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
@@ -62,7 +65,7 @@ class CoinCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text('\$$currentPrice'),
+                  Text('\$${formatter.format(currentPrice)}'),
                   const SizedBox(height: 3),
                   Text.rich(
                     TextSpan(
