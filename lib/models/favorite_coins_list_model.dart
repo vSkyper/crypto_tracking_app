@@ -1,13 +1,18 @@
-
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FavoriteCoinsListModel extends ChangeNotifier {
-  final List<String> _favoriteCoins = [];
+  List<String> _favoriteCoins = [];
 
-  void _setPrefItems() async {
+  Future<void> _setPrefItems() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setStringList('favoriteCoins', _favoriteCoins);
+  }
+
+  Future<void> _getPrefItems() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    _favoriteCoins = prefs.getStringList('favoriteCoins') ?? [];
+    notifyListeners();
   }
 
   Future<void> toggleFavorite(id) async {
@@ -21,5 +26,8 @@ class FavoriteCoinsListModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<String> get favoriteCoins => _favoriteCoins;
+  List<String> getFavoriteCoins() {
+    _getPrefItems();
+    return _favoriteCoins;
+  }
 }

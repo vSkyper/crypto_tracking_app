@@ -16,7 +16,7 @@ class FavoriteCoins extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<FavoriteCoinsListModel>(
       builder: (context, model, child) {
-        List<String> favoriteCoinsId = model.favoriteCoins;
+        List<String> favoriteCoinsId = model.getFavoriteCoins();
 
         List<Coins> favoriteCoins =
             coins.where((item) => favoriteCoinsId.contains(item.id)).toList();

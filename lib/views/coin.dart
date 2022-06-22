@@ -43,7 +43,8 @@ class _CoinWidgetState extends State<CoinWidget> {
   @override
   Widget build(BuildContext context) {
     final model = Provider.of<FavoriteCoinsListModel>(context);
-    List<String> favoriteCoins = model.favoriteCoins;
+    List<String> favoriteCoins = model.getFavoriteCoins();
+
     setState(() {
       _isFav = favoriteCoins.contains(widget.id);
     });
