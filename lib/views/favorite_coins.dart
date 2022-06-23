@@ -25,27 +25,25 @@ class FavoriteCoins extends StatelessWidget {
         backgroundColor: const Color(0xFF18181B),
         elevation: 0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(left: 15, right: 15),
-        child: favoriteCoins.isEmpty
-            ? const Align(
-                alignment: Alignment.topCenter,
-                child: Text('You don\'t have any favorite coins :('))
-            : ListView.builder(
-                physics: const BouncingScrollPhysics(),
-                itemCount: favoriteCoins.length,
-                itemBuilder: (context, index) {
-                  return CoinCard(
-                      id: favoriteCoins[index].id,
-                      name: favoriteCoins[index].name,
-                      symbol: favoriteCoins[index].symbol,
-                      currentPrice: favoriteCoins[index].currentPrice,
-                      priceChangePercentage24h:
-                          favoriteCoins[index].priceChangePercentage24h,
-                      image: favoriteCoins[index].image);
-                },
-              ),
-      ),
+      body: favoriteCoins.isEmpty
+          ? const Align(
+              alignment: Alignment.topCenter,
+              child: Text('You don\'t have any favorite coins :('))
+          : ListView.builder(
+              padding: const EdgeInsets.only(left: 15, right: 15),
+              physics: const BouncingScrollPhysics(),
+              itemCount: favoriteCoins.length,
+              itemBuilder: (context, index) {
+                return CoinCard(
+                    id: favoriteCoins[index].id,
+                    name: favoriteCoins[index].name,
+                    symbol: favoriteCoins[index].symbol,
+                    currentPrice: favoriteCoins[index].currentPrice,
+                    priceChangePercentage24h:
+                        favoriteCoins[index].priceChangePercentage24h,
+                    image: favoriteCoins[index].image);
+              },
+            ),
     );
   }
 }

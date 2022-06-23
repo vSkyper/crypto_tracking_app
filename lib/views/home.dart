@@ -67,34 +67,32 @@ class _HomePageState extends State<HomePage> {
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Padding(
+          : ListView.builder(
               padding: const EdgeInsets.only(left: 15, right: 15),
-              child: ListView.builder(
-                physics: const BouncingScrollPhysics(),
-                itemCount: _coins.length,
-                itemBuilder: (context, index) {
-                  var coinCard = CoinCard(
-                      id: _coins[index].id,
-                      name: _coins[index].name,
-                      symbol: _coins[index].symbol,
-                      currentPrice: _coins[index].currentPrice,
-                      priceChangePercentage24h:
-                          _coins[index].priceChangePercentage24h,
-                      image: _coins[index].image);
+              physics: const BouncingScrollPhysics(),
+              itemCount: _coins.length,
+              itemBuilder: (context, index) {
+                var coinCard = CoinCard(
+                    id: _coins[index].id,
+                    name: _coins[index].name,
+                    symbol: _coins[index].symbol,
+                    currentPrice: _coins[index].currentPrice,
+                    priceChangePercentage24h:
+                        _coins[index].priceChangePercentage24h,
+                    image: _coins[index].image);
 
-                  if (index == 0) {
-                    return Column(
-                      children: [
-                        GlobalDataWidget(globalData: _globalData),
-                        const SizedBox(height: 20),
-                        coinCard
-                      ],
-                    );
-                  }
+                if (index == 0) {
+                  return Column(
+                    children: [
+                      GlobalDataWidget(globalData: _globalData),
+                      const SizedBox(height: 20),
+                      coinCard
+                    ],
+                  );
+                }
 
-                  return coinCard;
-                },
-              ),
+                return coinCard;
+              },
             ),
     );
   }
