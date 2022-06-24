@@ -19,23 +19,21 @@ class _HomePageState extends State<HomePage> {
   late GlobalData _globalData;
   late List<Coins> _coins;
   late List<Coins> _searchedCoins;
+  late Stream _streamFetchData;
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
 
-    fetchData();
+    _streamFetchData = fetchData();
   }
 
-  Future<void> fetchData() async {
+  Stream fetchData() async* {
     _globalData = await GlobalDataApi.getGlobalData();
     _coins = await CoinsApi.getCoins();
     _searchedCoins = _coins;
-
-    setState(() {
-      _isLoading = false;
-    });
+    _isLoading = false;
   }
 
   void searchCoins(String value) {
@@ -76,9 +74,11 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
+      body: StreamBuilder(
+        stream: _streamFetchData,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return Padding(
               padding: const EdgeInsets.only(left: 15, right: 15),
               child: CustomScrollView(
                 physics: const BouncingScrollPhysics(),
@@ -124,7 +124,12 @@ class _HomePageState extends State<HomePage> {
                         )
                 ],
               ),
-            ),
+            );
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
     );
   }
 }

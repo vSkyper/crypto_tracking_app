@@ -28,22 +28,18 @@ class CoinWidget extends StatefulWidget {
 class _CoinWidgetState extends State<CoinWidget> {
   late Coin _coin;
   late List<Ohlc> _ohlc;
-  bool _isLoading = true;
+  late Stream _streamFetchData;
 
   @override
   void initState() {
     super.initState();
 
-    fetchData();
+    _streamFetchData = fetchData();
   }
 
-  Future<void> fetchData() async {
+  Stream fetchData() async* {
     _coin = await CoinApi.getCoin(widget.id);
     _ohlc = await OhlcApi.getOhlc(widget.id);
-
-    setState(() {
-      _isLoading = false;
-    });
   }
 
   @override
@@ -76,9 +72,11 @@ class _CoinWidgetState extends State<CoinWidget> {
           ],
         ),
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : ListView(
+      body: StreamBuilder(
+        stream: _streamFetchData,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return ListView(
               padding: const EdgeInsets.only(left: 15, right: 15),
               physics: const BouncingScrollPhysics(),
               children: [
@@ -192,7 +190,12 @@ class _CoinWidgetState extends State<CoinWidget> {
                 ),
                 const SizedBox(height: 20),
               ],
-            ),
+            );
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
     );
   }
 }
