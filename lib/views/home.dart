@@ -5,6 +5,7 @@ import 'package:crypto_tracking_app/models/global_data.dart';
 import 'package:crypto_tracking_app/views/favorite_coins.dart';
 import 'package:crypto_tracking_app/views/widgets/coin_card.dart';
 import 'package:crypto_tracking_app/views/widgets/global_data_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -17,6 +18,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late GlobalData _globalData;
   late List<Coins> _coins;
+  late List<Coins> _searchedCoins;
   bool _isLoading = true;
 
   @override
@@ -29,9 +31,19 @@ class _HomePageState extends State<HomePage> {
   Future<void> fetchData() async {
     _globalData = await GlobalDataApi.getGlobalData();
     _coins = await CoinsApi.getCoins();
+    _searchedCoins = _coins;
 
     setState(() {
       _isLoading = false;
+    });
+  }
+
+  void searchCoins(String value) {
+    setState(() {
+      _searchedCoins = _coins
+          .where(
+              (item) => item.name.toLowerCase().contains(value.toLowerCase()))
+          .toList();
     });
   }
 
@@ -66,32 +78,52 @@ class _HomePageState extends State<HomePage> {
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
+          : Padding(
               padding: const EdgeInsets.only(left: 15, right: 15),
-              physics: const BouncingScrollPhysics(),
-              itemCount: _coins.length,
-              itemBuilder: (context, index) {
-                var coinCard = CoinCard(
-                    id: _coins[index].id,
-                    name: _coins[index].name,
-                    symbol: _coins[index].symbol,
-                    currentPrice: _coins[index].currentPrice,
-                    priceChangePercentage24h:
-                        _coins[index].priceChangePercentage24h,
-                    image: _coins[index].image);
-
-                if (index == 0) {
-                  return Column(
-                    children: [
-                      GlobalDataWidget(globalData: _globalData),
-                      const SizedBox(height: 20),
-                      coinCard
-                    ],
-                  );
-                }
-
-                return coinCard;
-              },
+              child: CustomScrollView(
+                physics: const BouncingScrollPhysics(),
+                slivers: [
+                  SliverList(
+                    delegate: SliverChildListDelegate(
+                      [
+                        GlobalDataWidget(globalData: _globalData),
+                        const SizedBox(height: 20),
+                        CupertinoSearchTextField(
+                          style: const TextStyle(color: Colors.white),
+                          onChanged: (value) {
+                            searchCoins(value);
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                  _searchedCoins.isEmpty
+                      ? const SliverToBoxAdapter(
+                          child: Align(
+                            alignment: Alignment.topCenter,
+                            child: Text('No result found'),
+                          ),
+                        )
+                      : SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                            childCount: _searchedCoins.length,
+                            (context, index) {
+                              return CoinCard(
+                                  id: _searchedCoins[index].id,
+                                  name: _searchedCoins[index].name,
+                                  symbol: _searchedCoins[index].symbol,
+                                  currentPrice:
+                                      _searchedCoins[index].currentPrice,
+                                  priceChangePercentage24h:
+                                      _searchedCoins[index]
+                                          .priceChangePercentage24h,
+                                  image: _searchedCoins[index].image);
+                            },
+                          ),
+                        )
+                ],
+              ),
             ),
     );
   }

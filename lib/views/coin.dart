@@ -80,16 +80,22 @@ class _CoinWidgetState extends State<CoinWidget> {
           ? const Center(child: CircularProgressIndicator())
           : ListView(
               padding: const EdgeInsets.only(left: 15, right: 15),
+              physics: const BouncingScrollPhysics(),
               children: [
-                const Text('Current Price:'),
+                const Text(
+                  'Current Price:',
+                  style: TextStyle(fontSize: 17.5),
+                ),
                 const SizedBox(height: 5),
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(formatter.format(_coin.price),
-                        style: const TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold)),
-                    const SizedBox(width: 7),
+                    Text(
+                      formatter.format(_coin.price),
+                      style: const TextStyle(
+                          fontSize: 19.5, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(width: 6),
                     Text(
                       '${_coin.priceChangePercentage24h.toStringAsFixed(2)}%',
                       style: TextStyle(

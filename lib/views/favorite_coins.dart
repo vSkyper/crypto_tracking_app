@@ -25,7 +25,8 @@ class FavoriteCoins extends StatelessWidget {
       body: favoriteCoins.isEmpty
           ? const Align(
               alignment: Alignment.topCenter,
-              child: Text('You don\'t have any favorite coins :('))
+              child: Text('You don\'t have any favorite coins :('),
+            )
           : ListView.builder(
               padding: const EdgeInsets.only(left: 15, right: 15),
               physics: const BouncingScrollPhysics(),
