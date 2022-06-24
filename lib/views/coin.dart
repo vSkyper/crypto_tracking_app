@@ -56,8 +56,6 @@ class _CoinWidgetState extends State<CoinWidget> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF18181B),
-        elevation: 0,
         centerTitle: true,
         actions: [
           IconButton(

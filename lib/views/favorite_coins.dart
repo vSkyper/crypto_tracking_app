@@ -21,10 +21,7 @@ class FavoriteCoins extends StatelessWidget {
         .toList();
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF18181B),
-        elevation: 0,
-      ),
+      appBar: AppBar(),
       body: favoriteCoins.isEmpty
           ? const Align(
               alignment: Alignment.topCenter,
