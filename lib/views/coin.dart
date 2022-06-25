@@ -1,13 +1,10 @@
-import 'dart:math';
 import 'package:crypto_tracking_app/models/coin.api.dart';
 import 'package:crypto_tracking_app/models/coin.dart';
 import 'package:crypto_tracking_app/models/favorite_coins_list_model.dart';
-import 'package:crypto_tracking_app/models/ohlc.api.dart';
-import 'package:crypto_tracking_app/models/ohlc.dart';
+import 'package:crypto_tracking_app/views/widgets/ohlc_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
 
 class CoinWidget extends StatefulWidget {
   final String id;
@@ -27,7 +24,6 @@ class CoinWidget extends StatefulWidget {
 
 class _CoinWidgetState extends State<CoinWidget> {
   late Coin _coin;
-  late List<Ohlc> _ohlc;
   late Stream _streamFetchData;
 
   @override
@@ -39,7 +35,6 @@ class _CoinWidgetState extends State<CoinWidget> {
 
   Stream fetchData() async* {
     _coin = await CoinApi.getCoin(widget.id);
-    _ohlc = await OhlcApi.getOhlc(widget.id);
   }
 
   @override
@@ -105,35 +100,7 @@ class _CoinWidgetState extends State<CoinWidget> {
                   ],
                 ),
                 const SizedBox(height: 20),
-                SfCartesianChart(
-                  plotAreaBorderWidth: 0,
-                  trackballBehavior: TrackballBehavior(
-                    enable: true,
-                    activationMode: ActivationMode.singleTap,
-                  ),
-                  series: [
-                    CandleSeries<Ohlc, DateTime>(
-                        dataSource: _ohlc,
-                        xValueMapper: (Ohlc data, _) => data.time,
-                        lowValueMapper: (Ohlc data, _) => data.low,
-                        highValueMapper: (Ohlc data, _) => data.high,
-                        openValueMapper: (Ohlc data, _) => data.open,
-                        closeValueMapper: (Ohlc data, _) => data.close)
-                  ],
-                  primaryXAxis: DateTimeAxis(
-                    dateFormat: DateFormat.MMMd(),
-                    majorGridLines: const MajorGridLines(width: 0),
-                    axisLine: const AxisLine(width: 0),
-                  ),
-                  primaryYAxis: NumericAxis(
-                    majorGridLines: const MajorGridLines(width: 0),
-                    axisLine: const AxisLine(width: 0),
-                    isVisible: false,
-                    minimum: _ohlc.map<num>((e) => e.low).reduce(min) as double,
-                    maximum:
-                        _ohlc.map<num>((e) => e.high).reduce(max) as double,
-                  ),
-                ),
+                OhlcWidget(id: widget.id),
                 const SizedBox(height: 20),
                 Stack(
                   children: [

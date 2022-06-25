@@ -20,7 +20,6 @@ class _HomePageState extends State<HomePage> {
   late List<Coins> _coins;
   late List<Coins> _searchedCoins;
   late Stream _streamFetchData;
-  bool _isLoading = true;
 
   @override
   void initState() {
@@ -30,10 +29,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   Stream fetchData() async* {
-    _globalData = await GlobalDataApi.getGlobalData();
-    _coins = await CoinsApi.getCoins();
+    List responses =
+        await Future.wait([GlobalDataApi.getGlobalData(), CoinsApi.getCoins()]);
+    _globalData = responses[0];
+    _coins = responses[1];
     _searchedCoins = _coins;
-    _isLoading = false;
   }
 
   void searchCoins(String value) {
@@ -56,13 +56,11 @@ class _HomePageState extends State<HomePage> {
             highlightColor: Colors.transparent,
             icon: const Icon(Icons.favorite, color: Colors.red),
             onPressed: () {
-              if (!_isLoading) {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => FavoriteCoins(coins: _coins),
-                  ),
-                );
-              }
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const FavoriteCoins(),
+                ),
+              );
             },
           ),
         ],
