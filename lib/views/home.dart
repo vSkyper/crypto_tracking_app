@@ -108,15 +108,16 @@ class _HomePageState extends State<HomePage> {
                             childCount: _searchedCoins.length,
                             (context, index) {
                               return CoinCard(
-                                  id: _searchedCoins[index].id,
-                                  name: _searchedCoins[index].name,
-                                  symbol: _searchedCoins[index].symbol,
-                                  currentPrice:
-                                      _searchedCoins[index].currentPrice,
-                                  priceChangePercentage24h:
-                                      _searchedCoins[index]
-                                          .priceChangePercentage24h,
-                                  image: _searchedCoins[index].image);
+                                id: _searchedCoins[index].id,
+                                name: _searchedCoins[index].name,
+                                symbol: _searchedCoins[index].symbol,
+                                currentPrice:
+                                    _searchedCoins[index].currentPrice,
+                                priceChangePercentage24h: _searchedCoins[index]
+                                    .priceChangePercentage24h,
+                                image: _searchedCoins[index].image,
+                                rank: _searchedCoins[index].rank,
+                              );
                             },
                           ),
                         )

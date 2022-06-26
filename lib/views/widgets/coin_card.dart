@@ -9,6 +9,7 @@ class CoinCard extends StatelessWidget {
   final num currentPrice;
   final num priceChangePercentage24h;
   final String image;
+  final num rank;
 
   const CoinCard({
     Key? key,
@@ -18,6 +19,7 @@ class CoinCard extends StatelessWidget {
     required this.currentPrice,
     required this.priceChangePercentage24h,
     required this.image,
+    required this.rank,
   }) : super(key: key);
 
   @override
@@ -42,7 +44,16 @@ class CoinCard extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: Row(
                 children: [
-                  Image.network(image, width: 30, height: 30),
+                  Text(
+                    rank.toString(),
+                    style: const TextStyle(
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w200,
+                      fontSize: 13,
+                    ),
+                  ),
+                  const SizedBox(width: 7),
+                  Image.network(image, width: 27, height: 27),
                   const SizedBox(width: 7),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,9 +62,10 @@ class CoinCard extends StatelessWidget {
                       Text(
                         symbol.toUpperCase(),
                         style: const TextStyle(
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w200,
-                            fontSize: 12),
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w200,
+                          fontSize: 12,
+                        ),
                       ),
                     ],
                   ),
@@ -70,6 +82,10 @@ class CoinCard extends StatelessWidget {
                   Text.rich(
                     TextSpan(
                       text: '24h: ',
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontWeight: FontWeight.w200,
+                      ),
                       children: [
                         TextSpan(
                           text:
@@ -78,6 +94,7 @@ class CoinCard extends StatelessWidget {
                             color: (priceChangePercentage24h < 0
                                 ? Colors.red
                                 : Colors.green),
+                            fontWeight: FontWeight.normal,
                           ),
                         ),
                       ],

@@ -44,6 +44,7 @@ class _CoinWidgetState extends State<CoinWidget> {
     );
 
     final formatter = NumberFormat.currency(symbol: '\$');
+    final compactFormatter = NumberFormat.compactCurrency(symbol: '\$');
 
     return Scaffold(
       appBar: AppBar(
@@ -61,9 +62,14 @@ class _CoinWidgetState extends State<CoinWidget> {
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.network(widget.image, width: 30, height: 30),
+            Image.network(widget.image, width: 25, height: 25),
             const SizedBox(width: 10),
-            Text(widget.name),
+            Text(
+              widget.name,
+              style: const TextStyle(
+                fontSize: 16,
+              ),
+            ),
           ],
         ),
       ),
@@ -75,86 +81,99 @@ class _CoinWidgetState extends State<CoinWidget> {
               padding: const EdgeInsets.only(left: 15, right: 15),
               physics: const BouncingScrollPhysics(),
               children: [
-                const Text(
-                  'Current Price:',
-                  style: TextStyle(fontSize: 17.5),
-                ),
-                const SizedBox(height: 5),
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
-                      formatter.format(_coin.price),
-                      style: const TextStyle(
-                          fontSize: 19.5, fontWeight: FontWeight.bold),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Current Price',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w200,
+                            fontSize: 12,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(formatter.format(_coin.price)),
+                        const SizedBox(width: 5),
+                        Text(
+                          '${_coin.priceChangePercentage24h.toStringAsFixed(2)}%',
+                          style: TextStyle(
+                            color: (_coin.priceChangePercentage24h < 0
+                                ? Colors.red
+                                : Colors.green),
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 6),
-                    Text(
-                      '${_coin.priceChangePercentage24h.toStringAsFixed(2)}%',
-                      style: TextStyle(
-                        color: (_coin.priceChangePercentage24h < 0
-                            ? Colors.red
-                            : Colors.green),
-                      ),
+                    const Spacer(),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        const Text(
+                          'Market Capitalization',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w200,
+                            fontSize: 12,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(compactFormatter.format(_coin.marketCap)),
+                        const SizedBox(width: 5),
+                        Text(
+                          '${_coin.marketCapChangePercentage24h.toStringAsFixed(2)}%',
+                          style: TextStyle(
+                            color: (_coin.marketCapChangePercentage24h < 0
+                                ? Colors.red
+                                : Colors.green),
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 15),
+                Row(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Rank',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w200,
+                            fontSize: 12,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(_coin.rank.toString()),
+                      ],
+                    ),
+                    const Spacer(),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        const Text(
+                          '24h Trading Volume',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w200,
+                            fontSize: 12,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(compactFormatter.format(_coin.totalVolume)),
+                      ],
                     ),
                   ],
                 ),
                 const SizedBox(height: 20),
                 OhlcWidget(id: widget.id),
-                const SizedBox(height: 20),
-                Stack(
-                  children: [
-                    const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text('Market Capitalization'),
-                    ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(formatter.format(_coin.marketCap)),
-                    ),
-                  ],
-                ),
-                const Divider(color: Colors.grey),
-                Stack(
-                  children: [
-                    const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text('24h Trading Volume'),
-                    ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(formatter.format(_coin.totalVolume)),
-                    ),
-                  ],
-                ),
-                const Divider(color: Colors.grey),
-                Stack(
-                  children: [
-                    const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text('Volume / Market Cap'),
-                    ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(formatter
-                          .format(_coin.totalVolume / _coin.marketCap)),
-                    ),
-                  ],
-                ),
-                const Divider(color: Colors.grey),
-                Stack(
-                  children: [
-                    const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text('24h Low / 24h High'),
-                    ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                          '${formatter.format(_coin.low)} / ${formatter.format(_coin.high)}'),
-                    ),
-                  ],
-                ),
                 const SizedBox(height: 20),
               ],
             );

@@ -61,7 +61,9 @@ class _FavoriteCoinsState extends State<FavoriteCoins> {
                       currentPrice: favoriteCoins[index].currentPrice,
                       priceChangePercentage24h:
                           favoriteCoins[index].priceChangePercentage24h,
-                      image: favoriteCoins[index].image);
+                      image: favoriteCoins[index].image,
+                      rank: favoriteCoins[index].rank,
+                      );
                 },
               );
             }

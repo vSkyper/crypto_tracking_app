@@ -5,6 +5,7 @@ class Coins {
   final num currentPrice;
   final num priceChangePercentage24h;
   final String image;
+  final num rank;
 
   Coins({
     required this.id,
@@ -13,6 +14,7 @@ class Coins {
     required this.currentPrice,
     required this.priceChangePercentage24h,
     required this.image,
+    required this.rank,
   });
 
   factory Coins.fromJson(dynamic json) {
@@ -23,6 +25,7 @@ class Coins {
       currentPrice: json['current_price'] as num,
       priceChangePercentage24h: json['price_change_percentage_24h'] as num,
       image: json['image'] as String,
+      rank: json['market_cap_rank'] as num,
     );
   }
 

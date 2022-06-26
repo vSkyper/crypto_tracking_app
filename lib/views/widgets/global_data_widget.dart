@@ -1,11 +1,12 @@
 import 'package:crypto_tracking_app/models/global_data.dart';
 import 'package:flutter/material.dart';
-import 'dart:math';
+import 'package:intl/intl.dart';
 
 class GlobalDataWidget extends StatelessWidget {
   final GlobalData globalData;
+  final formatter = NumberFormat.compactCurrency(symbol: '\$');
 
-  const GlobalDataWidget({
+  GlobalDataWidget({
     Key? key,
     required this.globalData,
   }) : super(key: key);
@@ -18,7 +19,7 @@ class GlobalDataWidget extends StatelessWidget {
         children: [
           TextSpan(
               text:
-                  'The global cryptocurrency market cap today is \$${(globalData.totalMarketCapInUsd / pow(10, 12)).toStringAsFixed(2)} Trillion, a '),
+                  'The global cryptocurrency market cap today is ${formatter.format(globalData.totalMarketCapInUsd)}, a '),
           TextSpan(
             text:
                 '${globalData.marketCapChangePercentage24h.toStringAsFixed(2)}% ',
@@ -30,7 +31,7 @@ class GlobalDataWidget extends StatelessWidget {
           ),
           TextSpan(
               text:
-                  'change in the last 24 hours. Total cryptocurrency trading volume in the last day is at \$${(globalData.totalVolumeInUsd / pow(10, 9)).toStringAsFixed(2)} Billion. Bitcoin dominance is at ${globalData.marketCapPercentageBtc.toStringAsFixed(2)}% and Ethereum dominance is at ${globalData.marketCapPercentageEth.toStringAsFixed(2)}%. CoinGecko is now tracking ${globalData.activeCryptocurrencies} cryptocurrencies.')
+                  'change in the last 24 hours. Total cryptocurrency trading volume in the last day is at ${formatter.format(globalData.totalVolumeInUsd)}. Bitcoin dominance is at ${globalData.marketCapPercentageBtc.toStringAsFixed(2)}% and Ethereum dominance is at ${globalData.marketCapPercentageEth.toStringAsFixed(2)}%. CoinGecko is now tracking ${globalData.activeCryptocurrencies} cryptocurrencies.')
         ],
       ),
     );
