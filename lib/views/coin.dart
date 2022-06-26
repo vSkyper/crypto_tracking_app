@@ -91,19 +91,18 @@ class _CoinWidgetState extends State<CoinWidget> {
                           style: TextStyle(
                             color: Colors.grey,
                             fontWeight: FontWeight.w200,
-                            fontSize: 12,
+                            fontSize: 13,
                           ),
                         ),
                         const SizedBox(height: 5),
                         Text(formatter.format(_coin.price)),
-                        const SizedBox(width: 5),
+                        const SizedBox(height: 5),
                         Text(
                           '${_coin.priceChangePercentage24h.toStringAsFixed(2)}%',
                           style: TextStyle(
                             color: (_coin.priceChangePercentage24h < 0
                                 ? Colors.red
                                 : Colors.green),
-                            fontSize: 13,
                           ),
                         ),
                       ],
@@ -117,19 +116,18 @@ class _CoinWidgetState extends State<CoinWidget> {
                           style: TextStyle(
                             color: Colors.grey,
                             fontWeight: FontWeight.w200,
-                            fontSize: 12,
+                            fontSize: 13,
                           ),
                         ),
                         const SizedBox(height: 5),
                         Text(compactFormatter.format(_coin.marketCap)),
-                        const SizedBox(width: 5),
+                        const SizedBox(height: 5),
                         Text(
                           '${_coin.marketCapChangePercentage24h.toStringAsFixed(2)}%',
                           style: TextStyle(
                             color: (_coin.marketCapChangePercentage24h < 0
                                 ? Colors.red
                                 : Colors.green),
-                            fontSize: 13,
                           ),
                         ),
                       ],
@@ -147,7 +145,7 @@ class _CoinWidgetState extends State<CoinWidget> {
                           style: TextStyle(
                             color: Colors.grey,
                             fontWeight: FontWeight.w200,
-                            fontSize: 12,
+                            fontSize: 13,
                           ),
                         ),
                         const SizedBox(height: 5),
@@ -163,7 +161,7 @@ class _CoinWidgetState extends State<CoinWidget> {
                           style: TextStyle(
                             color: Colors.grey,
                             fontWeight: FontWeight.w200,
-                            fontSize: 12,
+                            fontSize: 13,
                           ),
                         ),
                         const SizedBox(height: 5),
