@@ -40,7 +40,7 @@ class _FavoriteCoinsState extends State<FavoriteCoins> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             List<Coins> favoriteCoins = _coins
-                .where((item) => model.getFavoriteCoins().contains(item.id))
+                .where((item) => model.favoriteCoins.contains(item.id))
                 .toList();
 
             if (favoriteCoins.isEmpty) {

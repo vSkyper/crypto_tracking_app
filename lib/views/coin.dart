@@ -39,8 +39,8 @@ class _CoinWidgetState extends State<CoinWidget> {
 
   @override
   Widget build(BuildContext context) {
-    var isFav = context.select<FavoriteCoinsListModel, bool>(
-      (favoriteCoins) => favoriteCoins.getFavoriteCoins().contains(widget.id),
+    bool isFav = context.select<FavoriteCoinsListModel, bool>(
+      (favoriteCoins) => favoriteCoins.favoriteCoins.contains(widget.id),
     );
 
     final formatter = NumberFormat.currency(symbol: '\$');

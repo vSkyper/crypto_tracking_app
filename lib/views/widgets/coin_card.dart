@@ -28,8 +28,8 @@ class CoinCard extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-              builder: (context) =>
-                  CoinWidget(id: id, name: name, image: image)),
+            builder: (context) => CoinWidget(id: id, name: name, image: image),
+          ),
         );
       },
       child: Container(
