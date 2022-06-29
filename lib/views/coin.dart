@@ -24,16 +24,16 @@ class CoinWidget extends StatefulWidget {
 
 class _CoinWidgetState extends State<CoinWidget> {
   late Coin _coin;
-  late Stream _streamFetchData;
+  late Future _dataFuture;
 
   @override
   void initState() {
     super.initState();
 
-    _streamFetchData = fetchData();
+    _dataFuture = fetchData();
   }
 
-  Stream fetchData() async* {
+  Future fetchData() async {
     _coin = await CoinApi.getCoin(widget.id);
   }
 
@@ -73,8 +73,8 @@ class _CoinWidgetState extends State<CoinWidget> {
           ],
         ),
       ),
-      body: StreamBuilder(
-        stream: _streamFetchData,
+      body: FutureBuilder(
+        future: _dataFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             return ListView(

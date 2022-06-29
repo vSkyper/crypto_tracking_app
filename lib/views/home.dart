@@ -19,16 +19,16 @@ class _HomePageState extends State<HomePage> {
   late GlobalData _globalData;
   late List<Coins> _coins;
   late List<Coins> _searchedCoins;
-  late Stream _streamFetchData;
+  late Future _dataFuture;
 
   @override
   void initState() {
     super.initState();
 
-    _streamFetchData = fetchData();
+    _dataFuture = fetchData();
   }
 
-  Stream fetchData() async* {
+  Future<void> fetchData() async {
     List responses =
         await Future.wait([GlobalDataApi.getGlobalData(), CoinsApi.getCoins()]);
     _globalData = responses[0];
@@ -72,8 +72,8 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      body: StreamBuilder(
-        stream: _streamFetchData,
+      body: FutureBuilder(
+        future: _dataFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             return Padding(

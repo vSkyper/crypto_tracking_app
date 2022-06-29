@@ -16,16 +16,16 @@ class FavoriteCoins extends StatefulWidget {
 
 class _FavoriteCoinsState extends State<FavoriteCoins> {
   late List<Coins> _coins;
-  late Stream _streamFetchData;
+  late Future _dataFuture;
 
   @override
   void initState() {
     super.initState();
 
-    _streamFetchData = fetchData();
+    _dataFuture = fetchData();
   }
 
-  Stream fetchData() async* {
+  Future<void> fetchData() async {
     _coins = await CoinsApi.getCoins();
   }
 
@@ -35,8 +35,8 @@ class _FavoriteCoinsState extends State<FavoriteCoins> {
 
     return Scaffold(
       appBar: AppBar(),
-      body: StreamBuilder(
-        stream: _streamFetchData,
+      body: FutureBuilder(
+        future: _dataFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             List<Coins> favoriteCoins = _coins

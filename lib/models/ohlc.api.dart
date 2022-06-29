@@ -3,10 +3,10 @@ import 'package:crypto_tracking_app/models/ohlc.dart';
 import 'package:http/http.dart' as http;
 
 class OhlcApi {
-  static Future<List<Ohlc>> getOhlc(id) async {
+  static Future<List<Ohlc>> getOhlc(id, days) async {
     var uri = Uri.https('api.coingecko.com', '/api/v3/coins/$id/ohlc', {
       'vs_currency': 'usd',
-      'days': '7',
+      'days': days,
     });
 
     final response = await http.get(uri);
