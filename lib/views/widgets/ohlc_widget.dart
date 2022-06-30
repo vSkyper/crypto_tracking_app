@@ -21,7 +21,7 @@ class _OhlcWidgetState extends State<OhlcWidget> {
   late List<Ohlc> _ohlc;
   late Future _dataFuture;
   String _days = '7';
-  final List<String> _daysList = ['1', '7', '30', '90', '365', 'max'];
+  final List<String> _daysList = ['1', '7', '30', '90', '180', '365', 'max'];
 
   @override
   void initState() {
@@ -38,23 +38,27 @@ class _OhlcWidgetState extends State<OhlcWidget> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Row(
-          children: [
-            for (var i in _daysList)
-              OutlinedButton(
-                onPressed: () {
-                  setState(() {
-                    _days = i;
-                    _dataFuture = fetchData();
-                  });
-                },
-                style: OutlinedButton.styleFrom(
-                  primary: _days == i ? Colors.blue : Colors.white,
-                  minimumSize: const Size(10, 30),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          physics: const BouncingScrollPhysics(),
+          child: Row(
+            children: [
+              for (var i in _daysList)
+                OutlinedButton(
+                  onPressed: () {
+                    setState(() {
+                      _days = i;
+                      _dataFuture = fetchData();
+                    });
+                  },
+                  style: OutlinedButton.styleFrom(
+                    primary: _days == i ? Colors.blue : Colors.white,
+                    minimumSize: const Size(10, 30),
+                  ),
+                  child: Text(i),
                 ),
-                child: Text(i),
-              ),
-          ],
+            ],
+          ),
         ),
         const SizedBox(
           height: 10,
