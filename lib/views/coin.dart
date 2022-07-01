@@ -4,6 +4,7 @@ import 'package:crypto_tracking_app/models/coin.dart';
 import 'package:crypto_tracking_app/views/widgets/ohlc_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:realm/realm.dart' as realm_package;
 
 class CoinWidget extends StatefulWidget {
   final String id;
@@ -25,27 +26,32 @@ class _CoinWidgetState extends State<CoinWidget> {
   late bool _isFav;
   late Coin _coin;
   late Future _dataFuture;
+  late final realm_package.Realm realm;
   late final dynamic subscription;
 
-  @override
-  void initState() {
-    super.initState();
+  _CoinWidgetState() {
+    var config =
+        realm_package.Configuration.local([FavoriteCoinsDatabase.schema]);
+    realm = realm_package.Realm(config);
 
     subscription = realm.all<FavoriteCoinsDatabase>().changes.listen((changes) {
       if (changes.deleted.isNotEmpty || changes.inserted.isNotEmpty) {
         setState(() {
           _isFav = realm
               .all<FavoriteCoinsDatabase>()
-              .where((element) => element.id == widget.id)
-              .isNotEmpty;
+              .query(r'id == $0', [widget.id]).isNotEmpty;
         });
       }
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
 
     _isFav = realm
         .all<FavoriteCoinsDatabase>()
-        .where((element) => element.id == widget.id)
-        .isNotEmpty;
+        .query(r'id == $0', [widget.id]).isNotEmpty;
 
     _dataFuture = fetchData();
   }

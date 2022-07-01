@@ -3,6 +3,7 @@ import 'package:crypto_tracking_app/models/coins.api.dart';
 import 'package:crypto_tracking_app/models/coins.dart';
 import 'package:crypto_tracking_app/views/widgets/coin_card.dart';
 import 'package:flutter/material.dart';
+import 'package:realm/realm.dart' as realm_package;
 
 class FavoriteCoins extends StatefulWidget {
   const FavoriteCoins({
@@ -16,11 +17,13 @@ class FavoriteCoins extends StatefulWidget {
 class _FavoriteCoinsState extends State<FavoriteCoins> {
   late List<Coins> _favoriteCoins;
   late Future _dataFuture;
+  late final realm_package.Realm realm;
   late final dynamic subscription;
 
-  @override
-  void initState() {
-    super.initState();
+  _FavoriteCoinsState() {
+    var config =
+        realm_package.Configuration.local([FavoriteCoinsDatabase.schema]);
+    realm = realm_package.Realm(config);
 
     subscription = realm.all<FavoriteCoinsDatabase>().changes.listen((changes) {
       if (changes.deleted.isNotEmpty || changes.inserted.isNotEmpty) {
@@ -29,22 +32,23 @@ class _FavoriteCoinsState extends State<FavoriteCoins> {
         });
       }
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
 
     _dataFuture = fetchData();
   }
 
   Future<void> fetchData() async {
-    var favoriteCoins = realm.all<FavoriteCoinsDatabase>();
-    var temp = [];
+    List favoriteCoins =
+        realm.all<FavoriteCoinsDatabase>().map((data) => data.id).toList();
 
-    for (var i in favoriteCoins) {
-      temp.add(i.id);
-    }
-
-    if (temp.isEmpty) {
+    if (favoriteCoins.isEmpty) {
       _favoriteCoins = [];
     } else {
-      _favoriteCoins = await CoinsApi.getCoins(ids: temp.join(','));
+      _favoriteCoins = await CoinsApi.getCoins(ids: favoriteCoins.join(','));
     }
   }
 

@@ -5,6 +5,3 @@ part 'app.g.dart';
 class _FavoriteCoinsDatabase {
   late String id;
 }
-
-var config = Configuration.local([FavoriteCoinsDatabase.schema]);
-var realm = Realm(config);
