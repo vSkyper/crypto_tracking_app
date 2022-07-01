@@ -1,9 +1,8 @@
+import 'package:crypto_tracking_app/database/app.dart';
 import 'package:crypto_tracking_app/models/coins.api.dart';
 import 'package:crypto_tracking_app/models/coins.dart';
-import 'package:crypto_tracking_app/models/favorite_coins_list_model.dart';
 import 'package:crypto_tracking_app/views/widgets/coin_card.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class FavoriteCoins extends StatefulWidget {
   const FavoriteCoins({
@@ -16,20 +15,45 @@ class FavoriteCoins extends StatefulWidget {
 
 class _FavoriteCoinsState extends State<FavoriteCoins> {
   late List<Coins> _favoriteCoins;
+  late Future _dataFuture;
+  late final dynamic subscription;
 
-  Future<void> fetchData(model) async {
-    _favoriteCoins =
-        await CoinsApi.getCoins(ids: model.favoriteCoins.join(','));
+  @override
+  void initState() {
+    super.initState();
+
+    subscription = realm.all<FavoriteCoinsDatabase>().changes.listen((changes) {
+      if (changes.deleted.isNotEmpty || changes.inserted.isNotEmpty) {
+        setState(() {
+          _dataFuture = fetchData();
+        });
+      }
+    });
+
+    _dataFuture = fetchData();
+  }
+
+  Future<void> fetchData() async {
+    var favoriteCoins = realm.all<FavoriteCoinsDatabase>();
+    var temp = [];
+
+    for (var i in favoriteCoins) {
+      temp.add(i.id);
+    }
+
+    if (temp.isEmpty) {
+      _favoriteCoins = [];
+    } else {
+      _favoriteCoins = await CoinsApi.getCoins(ids: temp.join(','));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    var model = context.watch<FavoriteCoinsListModel>();
-
     return Scaffold(
       appBar: AppBar(),
       body: FutureBuilder(
-        future: fetchData(model),
+        future: _dataFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (_favoriteCoins.isEmpty) {

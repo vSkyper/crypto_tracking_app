@@ -5,8 +5,8 @@
 import FlutterMacOS
 import Foundation
 
-import shared_preferences_macos
+import realm
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
-  SharedPreferencesPlugin.register(with: registry.registrar(forPlugin: "SharedPreferencesPlugin"))
+  RealmPlugin.register(with: registry.registrar(forPlugin: "RealmPlugin"))
 }

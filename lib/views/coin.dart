@@ -1,10 +1,9 @@
+import 'package:crypto_tracking_app/database/app.dart';
 import 'package:crypto_tracking_app/models/coin.api.dart';
 import 'package:crypto_tracking_app/models/coin.dart';
-import 'package:crypto_tracking_app/models/favorite_coins_list_model.dart';
 import 'package:crypto_tracking_app/views/widgets/ohlc_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 class CoinWidget extends StatefulWidget {
   final String id;
@@ -23,12 +22,30 @@ class CoinWidget extends StatefulWidget {
 }
 
 class _CoinWidgetState extends State<CoinWidget> {
+  late bool _isFav;
   late Coin _coin;
   late Future _dataFuture;
+  late final dynamic subscription;
 
   @override
   void initState() {
     super.initState();
+
+    subscription = realm.all<FavoriteCoinsDatabase>().changes.listen((changes) {
+      if (changes.deleted.isNotEmpty || changes.inserted.isNotEmpty) {
+        setState(() {
+          _isFav = realm
+              .all<FavoriteCoinsDatabase>()
+              .where((element) => element.id == widget.id)
+              .isNotEmpty;
+        });
+      }
+    });
+
+    _isFav = realm
+        .all<FavoriteCoinsDatabase>()
+        .where((element) => element.id == widget.id)
+        .isNotEmpty;
 
     _dataFuture = fetchData();
   }
@@ -39,10 +56,6 @@ class _CoinWidgetState extends State<CoinWidget> {
 
   @override
   Widget build(BuildContext context) {
-    bool isFav = context.select<FavoriteCoinsListModel, bool>(
-      (favoriteCoins) => favoriteCoins.favoriteCoins.contains(widget.id),
-    );
-
     final formatter = NumberFormat.currency(symbol: '\$');
     final compactFormatter = NumberFormat.compactCurrency(symbol: '\$');
 
@@ -51,11 +64,16 @@ class _CoinWidgetState extends State<CoinWidget> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(isFav ? Icons.favorite : Icons.favorite_border,
+            icon: Icon(_isFav ? Icons.favorite : Icons.favorite_border,
                 color: Colors.red),
             onPressed: () {
-              var model = context.read<FavoriteCoinsListModel>();
-              model.toggleFavorite(widget.id);
+              if (_isFav) {
+                realm.write(() => realm.deleteMany(realm
+                    .all<FavoriteCoinsDatabase>()
+                    .query("id == '${widget.id}'")));
+              } else {
+                realm.write(() => realm.add(FavoriteCoinsDatabase(widget.id)));
+              }
             },
           ),
         ],
