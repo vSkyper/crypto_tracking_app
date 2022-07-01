@@ -7,6 +7,7 @@ void main() {
   runApp(
     ChangeNotifierProvider<FavoriteCoinsListModel>(
       create: (_) => FavoriteCoinsListModel(),
+      lazy: false,
       child: const MyApp(),
     ),
   );

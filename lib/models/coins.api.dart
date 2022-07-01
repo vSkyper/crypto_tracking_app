@@ -3,9 +3,10 @@ import 'package:crypto_tracking_app/models/coins.dart';
 import 'package:http/http.dart' as http;
 
 class CoinsApi {
-  static Future<List<Coins>> getCoins() async {
+  static Future<List<Coins>> getCoins({ids = ''}) async {
     var uri = Uri.https('api.coingecko.com', '/api/v3/coins/markets', {
       'vs_currency': 'usd',
+      'ids': ids,
       'order': 'market_cap_desc',
       'per_page': '250',
       'page': '1',

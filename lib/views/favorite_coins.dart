@@ -15,18 +15,11 @@ class FavoriteCoins extends StatefulWidget {
 }
 
 class _FavoriteCoinsState extends State<FavoriteCoins> {
-  late List<Coins> _coins;
-  late Future _dataFuture;
+  late List<Coins> _favoriteCoins;
 
-  @override
-  void initState() {
-    super.initState();
-
-    _dataFuture = fetchData();
-  }
-
-  Future<void> fetchData() async {
-    _coins = await CoinsApi.getCoins();
+  Future<void> fetchData(model) async {
+    _favoriteCoins =
+        await CoinsApi.getCoins(ids: model.favoriteCoins.join(','));
   }
 
   @override
@@ -36,14 +29,10 @@ class _FavoriteCoinsState extends State<FavoriteCoins> {
     return Scaffold(
       appBar: AppBar(),
       body: FutureBuilder(
-        future: _dataFuture,
+        future: fetchData(model),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            List<Coins> favoriteCoins = _coins
-                .where((item) => model.favoriteCoins.contains(item.id))
-                .toList();
-
-            if (favoriteCoins.isEmpty) {
+            if (_favoriteCoins.isEmpty) {
               return const Align(
                 alignment: Alignment.topCenter,
                 child: Text('You don\'t have any favorite coins :('),
@@ -52,18 +41,18 @@ class _FavoriteCoinsState extends State<FavoriteCoins> {
               return ListView.builder(
                 padding: const EdgeInsets.only(left: 15, right: 15),
                 physics: const BouncingScrollPhysics(),
-                itemCount: favoriteCoins.length,
+                itemCount: _favoriteCoins.length,
                 itemBuilder: (context, index) {
                   return CoinCard(
-                      id: favoriteCoins[index].id,
-                      name: favoriteCoins[index].name,
-                      symbol: favoriteCoins[index].symbol,
-                      currentPrice: favoriteCoins[index].currentPrice,
-                      priceChangePercentage24h:
-                          favoriteCoins[index].priceChangePercentage24h,
-                      image: favoriteCoins[index].image,
-                      rank: favoriteCoins[index].rank,
-                      );
+                    id: _favoriteCoins[index].id,
+                    name: _favoriteCoins[index].name,
+                    symbol: _favoriteCoins[index].symbol,
+                    currentPrice: _favoriteCoins[index].currentPrice,
+                    priceChangePercentage24h:
+                        _favoriteCoins[index].priceChangePercentage24h,
+                    image: _favoriteCoins[index].image,
+                    rank: _favoriteCoins[index].rank,
+                  );
                 },
               );
             }
