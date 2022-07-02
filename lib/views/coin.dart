@@ -5,6 +5,7 @@ import 'package:crypto_tracking_app/views/widgets/ohlc_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:realm/realm.dart' as realm_package;
+import 'package:step_progress_indicator/step_progress_indicator.dart';
 
 class CoinWidget extends StatefulWidget {
   final String id;
@@ -25,6 +26,7 @@ class CoinWidget extends StatefulWidget {
 class _CoinWidgetState extends State<CoinWidget> {
   late bool _isFav;
   late Coin _coin;
+  late int _highLowPercentage;
   late Future _dataFuture;
   late final realm_package.Realm realm;
   late final dynamic subscription;
@@ -58,6 +60,13 @@ class _CoinWidgetState extends State<CoinWidget> {
 
   Future fetchData() async {
     _coin = await CoinApi.getCoin(widget.id);
+
+    _highLowPercentage = (100 * ((_coin.price - _coin.low) / (_coin.high - _coin.low))).toInt();
+    if (_highLowPercentage > 100) {
+      _highLowPercentage = 100;
+    } else if (_highLowPercentage < 0) {
+      _highLowPercentage = 0;
+    }
   }
 
   @override
@@ -192,6 +201,29 @@ class _CoinWidgetState extends State<CoinWidget> {
                         Text(compactFormatter.format(_coin.totalVolume)),
                       ],
                     ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                StepProgressIndicator(
+                  totalSteps: 100,
+                  currentStep: _highLowPercentage,
+                  size: 8,
+                  padding: 0,
+                  unselectedColor: Colors.grey.shade800,
+                  roundedEdges: const Radius.circular(10),
+                  selectedGradientColor: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Colors.yellow.shade700, Colors.green.shade700],
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(formatter.format(_coin.low)),
+                    const Text('24h Range'),
+                    Text(formatter.format(_coin.high)),
                   ],
                 ),
                 const SizedBox(height: 20),
