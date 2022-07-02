@@ -20,6 +20,7 @@ class _HomePageState extends State<HomePage> {
   late List<Coins> _coins;
   late List<Coins> _searchedCoins;
   late Future _dataFuture;
+  final TextEditingController _controller = TextEditingController();
 
   @override
   void initState() {
@@ -86,11 +87,39 @@ class _HomePageState extends State<HomePage> {
                       [
                         GlobalDataWidget(globalData: _globalData),
                         const SizedBox(height: 20),
-                        CupertinoSearchTextField(
-                          style: const TextStyle(color: Colors.white),
-                          onChanged: (value) {
-                            searchCoins(value);
-                          },
+                        SizedBox(
+                          height: 40,
+                          child: TextField(
+                            style: const TextStyle(color: Colors.white),
+                            controller: _controller,
+                            onChanged: (value) => searchCoins(value),
+                            decoration: InputDecoration(
+                              filled: true,
+                              isDense: true,
+                              fillColor: const Color(0xFF232327),
+                              contentPadding: EdgeInsets.zero,
+                              suffixIcon: _controller.text.isNotEmpty
+                                  ? IconButton(
+                                      onPressed: () {
+                                        _controller.clear();
+                                        searchCoins('');
+                                      },
+                                      icon: const Icon(Icons.close),
+                                      color: Colors.grey.shade700,
+                                      splashColor: Colors.transparent,
+                                      highlightColor: Colors.transparent,
+                                    )
+                                  : null,
+                              prefixIcon:
+                                  Icon(Icons.search, color: Colors.grey.shade700),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20),
+                                borderSide: BorderSide.none,
+                              ),
+                              hintStyle: TextStyle(color: Colors.grey.shade700),
+                              hintText: 'Search',
+                            ),
+                          ),
                         ),
                         const SizedBox(height: 20),
                       ],
