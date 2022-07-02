@@ -71,7 +71,7 @@ class _CoinWidgetState extends State<CoinWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final formatter = NumberFormat.currency(symbol: '\$');
+    final formatter = NumberFormat('\$###,###,##0.00#########');
     final compactFormatter = NumberFormat.compactCurrency(symbol: '\$');
 
     return Scaffold(

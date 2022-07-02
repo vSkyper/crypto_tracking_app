@@ -24,7 +24,7 @@ class CoinCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final formatter = NumberFormat.currency(symbol: '\$');
+    final formatter = NumberFormat('\$###,###,##0.00#########');
 
     return GestureDetector(
       onTap: () {

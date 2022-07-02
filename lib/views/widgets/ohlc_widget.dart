@@ -72,18 +72,23 @@ class _OhlcWidgetState extends State<OhlcWidget> {
                 trackballBehavior: TrackballBehavior(
                   enable: true,
                   activationMode: ActivationMode.singleTap,
+                  tooltipSettings: const InteractiveTooltip(
+                    format:
+                        'Date: point.x\nHigh: point.high\nLow: point.low\nOpen: point.open\nClose: point.close',
+                  ),
                 ),
                 series: [
                   CandleSeries<Ohlc, DateTime>(
-                      dataSource: _ohlc,
-                      xValueMapper: (Ohlc data, _) => data.time,
-                      lowValueMapper: (Ohlc data, _) => data.low,
-                      highValueMapper: (Ohlc data, _) => data.high,
-                      openValueMapper: (Ohlc data, _) => data.open,
-                      closeValueMapper: (Ohlc data, _) => data.close)
+                    dataSource: _ohlc,
+                    xValueMapper: (Ohlc data, _) => data.time,
+                    lowValueMapper: (Ohlc data, _) => data.low,
+                    highValueMapper: (Ohlc data, _) => data.high,
+                    openValueMapper: (Ohlc data, _) => data.open,
+                    closeValueMapper: (Ohlc data, _) => data.close,
+                  ),
                 ],
                 primaryXAxis: DateTimeAxis(
-                  dateFormat: DateFormat.MMMd(),
+                  dateFormat: DateFormat.yMMMd(),
                   majorGridLines: const MajorGridLines(width: 0),
                   axisLine: const AxisLine(width: 0),
                 ),
@@ -91,8 +96,8 @@ class _OhlcWidgetState extends State<OhlcWidget> {
                   majorGridLines: const MajorGridLines(width: 0),
                   axisLine: const AxisLine(width: 0),
                   isVisible: false,
-                  minimum: _ohlc.map<num>((e) => e.low).reduce(min) as double,
-                  maximum: _ohlc.map<num>((e) => e.high).reduce(max) as double,
+                  minimum: _ohlc.map((e) => e.low).reduce(min) as double,
+                  maximum: _ohlc.map((e) => e.high).reduce(max) as double,
                 ),
               );
             } else {
