@@ -85,7 +85,7 @@ class _CoinWidgetState extends State<CoinWidget> {
               if (_isFav) {
                 realm.write(() => realm.deleteMany(realm
                     .all<FavoriteCoinsDatabase>()
-                    .query("id == '${widget.id}'")));
+                    .query(r'id == $0', [widget.id])));
               } else {
                 realm.write(() => realm.add(FavoriteCoinsDatabase(widget.id)));
               }
