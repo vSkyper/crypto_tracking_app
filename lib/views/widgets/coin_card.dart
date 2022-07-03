@@ -27,13 +27,11 @@ class CoinCard extends StatelessWidget {
     final formatter = NumberFormat('\$###,###,##0.00#########');
 
     return GestureDetector(
-      onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => CoinWidget(id: id, name: name, image: image),
-          ),
-        );
-      },
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => CoinWidget(id: id, name: name, image: image),
+        ),
+      ),
       child: Container(
         width: MediaQuery.of(context).size.width,
         margin: const EdgeInsets.only(bottom: 25),

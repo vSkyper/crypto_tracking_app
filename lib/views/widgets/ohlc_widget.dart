@@ -45,12 +45,10 @@ class _OhlcWidgetState extends State<OhlcWidget> {
             children: [
               for (var i in _daysList)
                 OutlinedButton(
-                  onPressed: () {
-                    setState(() {
-                      _days = i;
-                      _dataFuture = fetchData();
-                    });
-                  },
+                  onPressed: () => setState(() {
+                    _days = i;
+                    _dataFuture = fetchData();
+                  }),
                   style: OutlinedButton.styleFrom(
                     primary: _days == i ? Colors.blue : Colors.white,
                     minimumSize: const Size(10, 30),

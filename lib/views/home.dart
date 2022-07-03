@@ -5,7 +5,6 @@ import 'package:crypto_tracking_app/models/global_data.dart';
 import 'package:crypto_tracking_app/views/favorite_coins.dart';
 import 'package:crypto_tracking_app/views/widgets/coin_card.dart';
 import 'package:crypto_tracking_app/views/widgets/global_data_widget.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -50,19 +49,24 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        elevation: 0,
         actions: [
           IconButton(
             splashColor: Colors.transparent,
             highlightColor: Colors.transparent,
+            icon: Icon(Icons.refresh, color: Colors.grey.shade700),
+            onPressed: () => setState(() {
+              _dataFuture = fetchData();
+            }),
+          ),
+          IconButton(
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
             icon: const Icon(Icons.favorite, color: Colors.red),
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const FavoriteCoins(),
-                ),
-              );
-            },
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const FavoriteCoins(),
+              ),
+            ),
           ),
         ],
         title: Row(
@@ -110,8 +114,10 @@ class _HomePageState extends State<HomePage> {
                                       highlightColor: Colors.transparent,
                                     )
                                   : null,
-                              prefixIcon:
-                                  Icon(Icons.search, color: Colors.grey.shade700),
+                              prefixIcon: Icon(
+                                Icons.search,
+                                color: Colors.grey.shade700,
+                              ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(15),
                                 borderSide: BorderSide.none,
@@ -149,7 +155,7 @@ class _HomePageState extends State<HomePage> {
                               );
                             },
                           ),
-                        )
+                        ),
                 ],
               ),
             );

@@ -58,10 +58,18 @@ class _CoinWidgetState extends State<CoinWidget> {
     _dataFuture = fetchData();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+
+    realm.close();
+  }
+
   Future fetchData() async {
     _coin = await CoinApi.getCoin(widget.id);
 
-    _highLowPercentage = (100 * ((_coin.price - _coin.low) / (_coin.high - _coin.low))).toInt();
+    _highLowPercentage =
+        (100 * ((_coin.price - _coin.low) / (_coin.high - _coin.low))).toInt();
     if (_highLowPercentage > 100) {
       _highLowPercentage = 100;
     } else if (_highLowPercentage < 0) {
@@ -78,6 +86,14 @@ class _CoinWidgetState extends State<CoinWidget> {
       appBar: AppBar(
         centerTitle: true,
         actions: [
+          IconButton(
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            icon: Icon(Icons.refresh, color: Colors.grey.shade700),
+            onPressed: () => setState(() {
+              _dataFuture = fetchData();
+            }),
+          ),
           IconButton(
             icon: Icon(_isFav ? Icons.favorite : Icons.favorite_border,
                 color: Colors.red),

@@ -41,6 +41,13 @@ class _FavoriteCoinsState extends State<FavoriteCoins> {
     _dataFuture = fetchData();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+
+    realm.close();
+  }
+
   Future<void> fetchData() async {
     List favoriteCoins =
         realm.all<FavoriteCoinsDatabase>().map((data) => data.id).toList();
@@ -55,7 +62,18 @@ class _FavoriteCoinsState extends State<FavoriteCoins> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            icon: Icon(Icons.refresh, color: Colors.grey.shade700),
+            onPressed: () => setState(() {
+              _dataFuture = fetchData();
+            }),
+          ),
+        ],
+      ),
       body: FutureBuilder(
         future: _dataFuture,
         builder: (context, snapshot) {
