@@ -69,7 +69,7 @@ class _CoinWidgetState extends State<CoinWidget> {
     _coin = await CoinApi.getCoin(widget.id);
 
     _highLowPercentage =
-        (100 * ((_coin.price - _coin.low) / (_coin.high - _coin.low))).toInt();
+        (100 * ((_coin.price - _coin.low) / (_coin.high - _coin.low))).round();
     if (_highLowPercentage > 100) {
       _highLowPercentage = 100;
     } else if (_highLowPercentage < 0) {

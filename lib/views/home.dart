@@ -34,6 +34,7 @@ class _HomePageState extends State<HomePage> {
     _globalData = responses[0];
     _coins = responses[1];
     _searchedCoins = _coins;
+    _controller.clear();
   }
 
   void searchCoins(String value) {
