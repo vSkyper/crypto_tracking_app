@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:crypto_tracking/views/coins.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +30,22 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
-        home: const Coins(),
+        home: StreamBuilder<ConnectivityResult>(
+          stream: Connectivity().onConnectivityChanged,
+          builder: (context, AsyncSnapshot<ConnectivityResult> snapshot) {
+            if (snapshot.hasData) {
+              if (snapshot.data == ConnectivityResult.none) {
+                return const Scaffold(
+                  body: Center(
+                    child: Text('No internet connection'),
+                  ),
+                );
+              }
+              return const Coins();
+            }
+            return const Scaffold(body: Center(child: CircularProgressIndicator()));
+          },
+        ),
       );
     });
   }
