@@ -1,4 +1,4 @@
-class Coins {
+class CoinsModel {
   final String id;
   final String name;
   final String symbol;
@@ -7,7 +7,7 @@ class Coins {
   final String image;
   final num rank;
 
-  Coins({
+  CoinsModel({
     required this.id,
     required this.name,
     required this.symbol,
@@ -17,8 +17,8 @@ class Coins {
     required this.rank,
   });
 
-  factory Coins.fromJson(dynamic json) {
-    return Coins(
+  factory CoinsModel.fromJson(dynamic json) {
+    return CoinsModel(
       id: json['id'] as String,
       name: json['name'] as String,
       symbol: json['symbol'] as String,
@@ -29,9 +29,9 @@ class Coins {
     );
   }
 
-  static List<Coins> coinsFromSnapshot(List snapshot) {
+  static List<CoinsModel> coinsFromSnapshot(List snapshot) {
     return snapshot.map((data) {
-      return Coins.fromJson(data);
+      return CoinsModel.fromJson(data);
     }).toList();
   }
 }

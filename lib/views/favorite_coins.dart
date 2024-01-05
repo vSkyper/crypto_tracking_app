@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:crypto_tracking/database/app.dart';
 import 'package:crypto_tracking/models/coins.api.dart';
 import 'package:crypto_tracking/models/coins.dart';
@@ -6,28 +8,26 @@ import 'package:flutter/material.dart';
 import 'package:realm/realm.dart' as realm_package;
 
 class FavoriteCoins extends StatefulWidget {
-  const FavoriteCoins({
-    Key? key,
-  }) : super(key: key);
+  const FavoriteCoins({super.key});
 
   @override
   State<FavoriteCoins> createState() => _FavoriteCoinsState();
 }
 
 class _FavoriteCoinsState extends State<FavoriteCoins> {
-  late List<Coins> _favoriteCoins;
+  late List<CoinsModel> _favoriteCoins;
   late Future _dataFuture;
-  late final realm_package.Realm realm;
-  late final dynamic subscription;
+  late final realm_package.Realm _realm;
+  late final StreamSubscription<realm_package.RealmResultsChanges<FavoriteCoinsDatabase>> _subscription;
 
   _FavoriteCoinsState() {
-    var config = realm_package.Configuration.local([FavoriteCoinsDatabase.schema]);
-    realm = realm_package.Realm(config);
+    final realm_package.Configuration config = realm_package.Configuration.local([FavoriteCoinsDatabase.schema]);
+    _realm = realm_package.Realm(config);
 
-    subscription = realm.all<FavoriteCoinsDatabase>().changes.listen((changes) {
+    _subscription = _realm.all<FavoriteCoinsDatabase>().changes.listen((changes) {
       if (changes.deleted.isNotEmpty || changes.inserted.isNotEmpty) {
         setState(() {
-          _dataFuture = fetchData();
+          _dataFuture = _fetchData();
         });
       }
     });
@@ -37,24 +37,35 @@ class _FavoriteCoinsState extends State<FavoriteCoins> {
   void initState() {
     super.initState();
 
-    _dataFuture = fetchData();
+    _dataFuture = _fetchData();
   }
 
   @override
   void dispose() {
     super.dispose();
 
-    realm.close();
+    _subscription.cancel();
+    _realm.close();
   }
 
-  Future<void> fetchData() async {
-    List favoriteCoins = realm.all<FavoriteCoinsDatabase>().map((data) => data.id).toList();
+  Future<void> _fetchData() async {
+    try {
+      final List favoriteCoins = _realm.all<FavoriteCoinsDatabase>().map((data) => data.id).toList();
 
-    if (favoriteCoins.isEmpty) {
-      _favoriteCoins = [];
-    } else {
+      if (favoriteCoins.isEmpty) {
+        _favoriteCoins = [];
+        return;
+      }
       _favoriteCoins = await CoinsApi.getCoins(ids: favoriteCoins.join(','));
+    } catch (e) {
+      rethrow;
     }
+  }
+
+  void _refreshCoins() {
+    setState(() {
+      _dataFuture = _fetchData();
+    });
   }
 
   @override
@@ -63,25 +74,27 @@ class _FavoriteCoinsState extends State<FavoriteCoins> {
       appBar: AppBar(
         actions: [
           IconButton(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            icon: Icon(Icons.refresh, color: Colors.grey.shade700),
-            onPressed: () => setState(() {
-              _dataFuture = fetchData();
-            }),
+            icon: const Icon(Icons.refresh),
+            onPressed: _refreshCoins,
           ),
         ],
       ),
       body: FutureBuilder(
         future: _dataFuture,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (_favoriteCoins.isEmpty) {
-              return const Align(
-                alignment: Alignment.topCenter,
-                child: Text('You don\'t have any favorite coins :('),
-              );
-            } else {
+          if (snapshot.hasError) return const Center(child: Text('Something went wrong :('));
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+            case ConnectionState.waiting:
+            case ConnectionState.active:
+              return const Center(child: CircularProgressIndicator());
+            case ConnectionState.done:
+              if (_favoriteCoins.isEmpty) {
+                return const Align(
+                  alignment: Alignment.topCenter,
+                  child: Text('You don\'t have any favorite coins :('),
+                );
+              }
               return ListView.builder(
                 padding: const EdgeInsets.only(left: 15, right: 15),
                 physics: const BouncingScrollPhysics(),
@@ -98,9 +111,6 @@ class _FavoriteCoinsState extends State<FavoriteCoins> {
                   );
                 },
               );
-            }
-          } else {
-            return const Center(child: CircularProgressIndicator());
           }
         },
       ),

@@ -1,45 +1,45 @@
+import 'dart:async';
 import 'package:crypto_tracking/database/app.dart';
 import 'package:crypto_tracking/models/coin.api.dart';
 import 'package:crypto_tracking/models/coin.dart';
 import 'package:crypto_tracking/views/widgets/ohlc_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:realm/realm.dart';
+import 'package:realm/realm.dart' as realm_package;
 import 'package:step_progress_indicator/step_progress_indicator.dart';
-import 'package:flutter/src/widgets/async.dart' as flutter_async;
 
-class CoinWidget extends StatefulWidget {
+class Coin extends StatefulWidget {
   final String id;
   final String name;
   final String image;
 
-  const CoinWidget({
-    Key? key,
+  const Coin({
+    super.key,
     required this.id,
     required this.name,
     required this.image,
-  }) : super(key: key);
+  });
 
   @override
-  State<CoinWidget> createState() => _CoinWidgetState();
+  State<Coin> createState() => _CoinState();
 }
 
-class _CoinWidgetState extends State<CoinWidget> {
+class _CoinState extends State<Coin> {
   late bool _isFav;
-  late Coin _coin;
+  late CoinModel _coin;
   late int _highLowPercentage;
   late Future _dataFuture;
-  late final Realm realm;
-  late final dynamic subscription;
+  late final realm_package.Realm _realm;
+  late final StreamSubscription<realm_package.RealmResultsChanges<FavoriteCoinsDatabase>> _subscription;
 
-  _CoinWidgetState() {
-    var config = Configuration.local([FavoriteCoinsDatabase.schema]);
-    realm = Realm(config);
+  _CoinState() {
+    final realm_package.Configuration config = realm_package.Configuration.local([FavoriteCoinsDatabase.schema]);
+    _realm = realm_package.Realm(config);
 
-    subscription = realm.all<FavoriteCoinsDatabase>().changes.listen((changes) {
+    _subscription = _realm.all<FavoriteCoinsDatabase>().changes.listen((changes) {
       if (changes.deleted.isNotEmpty || changes.inserted.isNotEmpty) {
         setState(() {
-          _isFav = realm.all<FavoriteCoinsDatabase>().query(r'id == $0', [widget.id]).isNotEmpty;
+          _isFav = _realm.all<FavoriteCoinsDatabase>().query(r'id == $0', [widget.id]).isNotEmpty;
         });
       }
     });
@@ -49,54 +49,62 @@ class _CoinWidgetState extends State<CoinWidget> {
   void initState() {
     super.initState();
 
-    _isFav = realm.all<FavoriteCoinsDatabase>().query(r'id == $0', [widget.id]).isNotEmpty;
-
-    _dataFuture = fetchData();
+    _isFav = _realm.all<FavoriteCoinsDatabase>().query(r'id == $0', [widget.id]).isNotEmpty;
+    _dataFuture = _fetchData();
   }
 
   @override
   void dispose() {
     super.dispose();
 
-    realm.close();
+    _subscription.cancel();
+    _realm.close();
   }
 
-  Future fetchData() async {
-    _coin = await CoinApi.getCoin(widget.id);
+  Future<void> _fetchData() async {
+    try {
+      _coin = await CoinApi.getCoin(widget.id);
 
-    _highLowPercentage = (100 * ((_coin.price - _coin.low) / (_coin.high - _coin.low))).round();
-    if (_highLowPercentage > 100) {
-      _highLowPercentage = 100;
-    } else if (_highLowPercentage < 0) {
-      _highLowPercentage = 0;
+      _highLowPercentage = (100 * ((_coin.price - _coin.low) / (_coin.high - _coin.low))).round();
+      if (_highLowPercentage > 100) {
+        _highLowPercentage = 100;
+      }
+      if (_highLowPercentage < 0) {
+        _highLowPercentage = 0;
+      }
+    } catch (e) {
+      rethrow;
     }
+  }
+
+  void _refreshCoin() {
+    setState(() {
+      _dataFuture = _fetchData();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final formatter = NumberFormat('\$###,###,##0.00#########');
-    final compactFormatter = NumberFormat.compactCurrency(symbol: '\$');
+    final NumberFormat formatter = NumberFormat('\$###,###,##0.00#########');
+    final NumberFormat compactFormatter = NumberFormat.compactCurrency(symbol: '\$');
 
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         actions: [
           IconButton(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            icon: Icon(Icons.refresh, color: Colors.grey.shade700),
-            onPressed: () => setState(() {
-              _dataFuture = fetchData();
-            }),
+            icon: const Icon(Icons.refresh),
+            onPressed: _refreshCoin,
           ),
           IconButton(
-            icon: Icon(_isFav ? Icons.favorite : Icons.favorite_border, color: Colors.red),
+            icon: Icon(_isFav ? Icons.favorite : Icons.favorite_border, color: Theme.of(context).colorScheme.primary),
             onPressed: () {
               if (_isFav) {
-                realm.write(() => realm.deleteMany(realm.all<FavoriteCoinsDatabase>().query(r'id == $0', [widget.id])));
-              } else {
-                realm.write(() => realm.add(FavoriteCoinsDatabase(widget.id)));
+                _realm.write(
+                    () => _realm.deleteMany(_realm.all<FavoriteCoinsDatabase>().query(r'id == $0', [widget.id])));
+                return;
               }
+              _realm.write(() => _realm.add(FavoriteCoinsDatabase(widget.id)));
             },
           ),
         ],
@@ -117,126 +125,126 @@ class _CoinWidgetState extends State<CoinWidget> {
       body: FutureBuilder(
         future: _dataFuture,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == flutter_async.ConnectionState.done) {
-            return ListView(
-              padding: const EdgeInsets.only(left: 15, right: 15),
-              physics: const BouncingScrollPhysics(),
-              children: [
-                Row(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Current Price',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w200,
-                            fontSize: 13,
+          if (snapshot.hasError) return const Center(child: Text('Something went wrong :('));
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+            case ConnectionState.waiting:
+            case ConnectionState.active:
+              return const Center(child: CircularProgressIndicator());
+            case ConnectionState.done:
+              return ListView(
+                padding: const EdgeInsets.only(left: 15, right: 15),
+                physics: const BouncingScrollPhysics(),
+                children: [
+                  Row(
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Current Price',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w200,
+                              fontSize: 13,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 5),
-                        Text(formatter.format(_coin.price)),
-                        const SizedBox(height: 5),
-                        Text(
-                          '${_coin.priceChangePercentage24h.toStringAsFixed(2)}%',
-                          style: TextStyle(
-                            color: (_coin.priceChangePercentage24h < 0 ? Colors.red : Colors.green),
+                          const SizedBox(height: 5),
+                          Text(formatter.format(_coin.price)),
+                          const SizedBox(height: 5),
+                          Text(
+                            '${_coin.priceChangePercentage24h.toStringAsFixed(2)}%',
+                            style: TextStyle(
+                              color: (_coin.priceChangePercentage24h < 0 ? Colors.red : Colors.green),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const Spacer(),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        const Text(
-                          'Market Capitalization',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w200,
-                            fontSize: 13,
+                        ],
+                      ),
+                      const Spacer(),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          const Text(
+                            'Market Capitalization',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w200,
+                              fontSize: 13,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 5),
-                        Text(compactFormatter.format(_coin.marketCap)),
-                        const SizedBox(height: 5),
-                        Text(
-                          '${_coin.marketCapChangePercentage24h.toStringAsFixed(2)}%',
-                          style: TextStyle(
-                            color: (_coin.marketCapChangePercentage24h < 0 ? Colors.red : Colors.green),
+                          const SizedBox(height: 5),
+                          Text(compactFormatter.format(_coin.marketCap)),
+                          const SizedBox(height: 5),
+                          Text(
+                            '${_coin.marketCapChangePercentage24h.toStringAsFixed(2)}%',
+                            style: TextStyle(
+                              color: (_coin.marketCapChangePercentage24h < 0 ? Colors.red : Colors.green),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 15),
-                Row(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Rank',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w200,
-                            fontSize: 13,
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        Text(_coin.rank.toString()),
-                      ],
-                    ),
-                    const Spacer(),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        const Text(
-                          '24h Trading Volume',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w200,
-                            fontSize: 13,
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        Text(compactFormatter.format(_coin.totalVolume)),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                StepProgressIndicator(
-                  totalSteps: 100,
-                  currentStep: _highLowPercentage,
-                  size: 8,
-                  padding: 0,
-                  unselectedColor: Colors.grey.shade800,
-                  roundedEdges: const Radius.circular(10),
-                  selectedGradientColor: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Colors.yellow.shade700, Colors.green.shade700],
+                        ],
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(height: 5),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(formatter.format(_coin.low)),
-                    const Text('24h Range'),
-                    Text(formatter.format(_coin.high)),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                OhlcWidget(id: widget.id),
-                const SizedBox(height: 20),
-              ],
-            );
-          } else {
-            return const Center(child: CircularProgressIndicator());
+                  const SizedBox(height: 15),
+                  Row(
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Rank',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w200,
+                              fontSize: 13,
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          Text(_coin.rank.toString()),
+                        ],
+                      ),
+                      const Spacer(),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          const Text(
+                            '24h Trading Volume',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w200,
+                              fontSize: 13,
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          Text(compactFormatter.format(_coin.totalVolume)),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  StepProgressIndicator(
+                    totalSteps: 100,
+                    currentStep: _highLowPercentage,
+                    size: 8,
+                    padding: 0,
+                    unselectedColor: Theme.of(context).colorScheme.onBackground.withOpacity(0.1),
+                    roundedEdges: const Radius.circular(10),
+                    selectedGradientColor: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [Colors.yellow.shade700, Colors.green.shade700],
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(formatter.format(_coin.low)),
+                      const Text('24h Range'),
+                      Text(formatter.format(_coin.high)),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Ohlc(id: widget.id),
+                  const SizedBox(height: 20),
+                ],
+              );
           }
         },
       ),

@@ -1,4 +1,4 @@
-import 'package:crypto_tracking/views/home.dart';
+import 'package:crypto_tracking/views/coins.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 
@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
-        home: const HomePage(),
+        home: const Coins(),
       );
     });
   }

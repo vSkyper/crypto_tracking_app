@@ -1,18 +1,24 @@
 import 'dart:convert';
 import 'package:crypto_tracking/models/ohlc.dart';
-import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 
 class OhlcApi {
-  static Future<List<Ohlc>> getOhlc(id, days) async {
-    var uri = Uri.https('api.coingecko.com', '/api/v3/coins/$id/ohlc', {
-      'vs_currency': 'usd',
-      'days': days,
-    });
+  static Future<List<OhlcModel>> getOhlc(id, days) async {
+    try {
+      final Uri uri = Uri.https('api.coingecko.com', '/api/v3/coins/$id/ohlc', {
+        'vs_currency': 'usd',
+        'days': days,
+      });
 
-    final response = await http.get(uri);
+      final Response response = await get(uri);
 
-    List data = json.decode(response.body);
+      if (response.statusCode != 200) throw Exception('Error getting ohlc');
 
-    return Ohlc.coinsFromSnapshot(data);
+      final List data = json.decode(response.body);
+
+      return OhlcModel.coinsFromSnapshot(data);
+    } catch (e) {
+      rethrow;
+    }
   }
 }

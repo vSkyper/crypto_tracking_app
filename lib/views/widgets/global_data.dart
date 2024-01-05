@@ -2,17 +2,17 @@ import 'package:crypto_tracking/models/global_data.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class GlobalDataWidget extends StatelessWidget {
-  final GlobalData globalData;
-  final formatter = NumberFormat.compactCurrency(symbol: '\$');
-
-  GlobalDataWidget({
-    Key? key,
+class GlobalData extends StatelessWidget {
+  final GlobalDataModel globalData;
+  const GlobalData({
+    super.key,
     required this.globalData,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
+    final NumberFormat formatter = NumberFormat.compactCurrency(symbol: '\$');
+
     return Text.rich(
       TextSpan(
         style: const TextStyle(height: 1.5, fontSize: 15.5),

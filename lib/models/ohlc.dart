@@ -1,11 +1,11 @@
-class Ohlc {
+class OhlcModel {
   final DateTime time;
   final num open;
   final num high;
   final num low;
   final num close;
 
-  Ohlc({
+  OhlcModel({
     required this.time,
     required this.open,
     required this.high,
@@ -13,8 +13,8 @@ class Ohlc {
     required this.close,
   });
 
-  factory Ohlc.fromJson(dynamic json) {
-    return Ohlc(
+  factory OhlcModel.fromJson(dynamic json) {
+    return OhlcModel(
       time: DateTime.fromMillisecondsSinceEpoch(json[0]),
       open: json[1] as num,
       high: json[2] as num,
@@ -23,9 +23,9 @@ class Ohlc {
     );
   }
 
-  static List<Ohlc> coinsFromSnapshot(List snapshot) {
+  static List<OhlcModel> coinsFromSnapshot(List snapshot) {
     return snapshot.map((data) {
-      return Ohlc.fromJson(data);
+      return OhlcModel.fromJson(data);
     }).toList();
   }
 }

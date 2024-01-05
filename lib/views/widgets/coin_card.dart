@@ -12,7 +12,7 @@ class CoinCard extends StatelessWidget {
   final num rank;
 
   const CoinCard({
-    Key? key,
+    super.key,
     required this.id,
     required this.name,
     required this.symbol,
@@ -20,7 +20,7 @@ class CoinCard extends StatelessWidget {
     required this.priceChangePercentage24h,
     required this.image,
     required this.rank,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +29,7 @@ class CoinCard extends StatelessWidget {
     return GestureDetector(
       onTap: () => Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => CoinWidget(id: id, name: name, image: image),
+          builder: (context) => Coin(id: id, name: name, image: image),
         ),
       ),
       child: Container(
@@ -45,7 +45,6 @@ class CoinCard extends StatelessWidget {
                   Text(
                     rank.toString(),
                     style: const TextStyle(
-                      color: Colors.grey,
                       fontWeight: FontWeight.w200,
                       fontSize: 13,
                     ),
@@ -60,7 +59,6 @@ class CoinCard extends StatelessWidget {
                       Text(
                         symbol.toUpperCase(),
                         style: const TextStyle(
-                          color: Colors.grey,
                           fontWeight: FontWeight.w200,
                           fontSize: 12,
                         ),
@@ -81,7 +79,6 @@ class CoinCard extends StatelessWidget {
                     TextSpan(
                       text: '24h: ',
                       style: const TextStyle(
-                        color: Colors.grey,
                         fontWeight: FontWeight.w200,
                       ),
                       children: [
