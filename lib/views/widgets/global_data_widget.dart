@@ -1,4 +1,4 @@
-import 'package:crypto_tracking_app/models/global_data.dart';
+import 'package:crypto_tracking/models/global_data.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -21,12 +21,9 @@ class GlobalDataWidget extends StatelessWidget {
               text:
                   'The global cryptocurrency market cap today is ${formatter.format(globalData.totalMarketCapInUsd)}, a '),
           TextSpan(
-            text:
-                '${globalData.marketCapChangePercentage24h.toStringAsFixed(2)}% ',
+            text: '${globalData.marketCapChangePercentage24h.toStringAsFixed(2)}% ',
             style: TextStyle(
-              color: (globalData.marketCapChangePercentage24h < 0
-                  ? Colors.red
-                  : Colors.green),
+              color: (globalData.marketCapChangePercentage24h < 0 ? Colors.red : Colors.green),
             ),
           ),
           TextSpan(

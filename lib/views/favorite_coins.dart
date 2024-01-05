@@ -1,7 +1,7 @@
-import 'package:crypto_tracking_app/database/app.dart';
-import 'package:crypto_tracking_app/models/coins.api.dart';
-import 'package:crypto_tracking_app/models/coins.dart';
-import 'package:crypto_tracking_app/views/widgets/coin_card.dart';
+import 'package:crypto_tracking/database/app.dart';
+import 'package:crypto_tracking/models/coins.api.dart';
+import 'package:crypto_tracking/models/coins.dart';
+import 'package:crypto_tracking/views/widgets/coin_card.dart';
 import 'package:flutter/material.dart';
 import 'package:realm/realm.dart' as realm_package;
 
@@ -21,8 +21,7 @@ class _FavoriteCoinsState extends State<FavoriteCoins> {
   late final dynamic subscription;
 
   _FavoriteCoinsState() {
-    var config =
-        realm_package.Configuration.local([FavoriteCoinsDatabase.schema]);
+    var config = realm_package.Configuration.local([FavoriteCoinsDatabase.schema]);
     realm = realm_package.Realm(config);
 
     subscription = realm.all<FavoriteCoinsDatabase>().changes.listen((changes) {
@@ -49,8 +48,7 @@ class _FavoriteCoinsState extends State<FavoriteCoins> {
   }
 
   Future<void> fetchData() async {
-    List favoriteCoins =
-        realm.all<FavoriteCoinsDatabase>().map((data) => data.id).toList();
+    List favoriteCoins = realm.all<FavoriteCoinsDatabase>().map((data) => data.id).toList();
 
     if (favoriteCoins.isEmpty) {
       _favoriteCoins = [];
@@ -94,8 +92,7 @@ class _FavoriteCoinsState extends State<FavoriteCoins> {
                     name: _favoriteCoins[index].name,
                     symbol: _favoriteCoins[index].symbol,
                     currentPrice: _favoriteCoins[index].currentPrice,
-                    priceChangePercentage24h:
-                        _favoriteCoins[index].priceChangePercentage24h,
+                    priceChangePercentage24h: _favoriteCoins[index].priceChangePercentage24h,
                     image: _favoriteCoins[index].image,
                     rank: _favoriteCoins[index].rank,
                   );

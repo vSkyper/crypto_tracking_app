@@ -1,4 +1,4 @@
-import 'package:crypto_tracking_app/views/coin.dart';
+import 'package:crypto_tracking/views/coin.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -86,12 +86,9 @@ class CoinCard extends StatelessWidget {
                       ),
                       children: [
                         TextSpan(
-                          text:
-                              '${priceChangePercentage24h.toStringAsFixed(2)}%',
+                          text: '${priceChangePercentage24h.toStringAsFixed(2)}%',
                           style: TextStyle(
-                            color: (priceChangePercentage24h < 0
-                                ? Colors.red
-                                : Colors.green),
+                            color: (priceChangePercentage24h < 0 ? Colors.red : Colors.green),
                             fontWeight: FontWeight.normal,
                           ),
                         ),

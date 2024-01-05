@@ -1,11 +1,12 @@
-import 'package:crypto_tracking_app/database/app.dart';
-import 'package:crypto_tracking_app/models/coin.api.dart';
-import 'package:crypto_tracking_app/models/coin.dart';
-import 'package:crypto_tracking_app/views/widgets/ohlc_widget.dart';
+import 'package:crypto_tracking/database/app.dart';
+import 'package:crypto_tracking/models/coin.api.dart';
+import 'package:crypto_tracking/models/coin.dart';
+import 'package:crypto_tracking/views/widgets/ohlc_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:realm/realm.dart' as realm_package;
+import 'package:realm/realm.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
+import 'package:flutter/src/widgets/async.dart' as flutter_async;
 
 class CoinWidget extends StatefulWidget {
   final String id;
@@ -28,20 +29,17 @@ class _CoinWidgetState extends State<CoinWidget> {
   late Coin _coin;
   late int _highLowPercentage;
   late Future _dataFuture;
-  late final realm_package.Realm realm;
+  late final Realm realm;
   late final dynamic subscription;
 
   _CoinWidgetState() {
-    var config =
-        realm_package.Configuration.local([FavoriteCoinsDatabase.schema]);
-    realm = realm_package.Realm(config);
+    var config = Configuration.local([FavoriteCoinsDatabase.schema]);
+    realm = Realm(config);
 
     subscription = realm.all<FavoriteCoinsDatabase>().changes.listen((changes) {
       if (changes.deleted.isNotEmpty || changes.inserted.isNotEmpty) {
         setState(() {
-          _isFav = realm
-              .all<FavoriteCoinsDatabase>()
-              .query(r'id == $0', [widget.id]).isNotEmpty;
+          _isFav = realm.all<FavoriteCoinsDatabase>().query(r'id == $0', [widget.id]).isNotEmpty;
         });
       }
     });
@@ -51,9 +49,7 @@ class _CoinWidgetState extends State<CoinWidget> {
   void initState() {
     super.initState();
 
-    _isFav = realm
-        .all<FavoriteCoinsDatabase>()
-        .query(r'id == $0', [widget.id]).isNotEmpty;
+    _isFav = realm.all<FavoriteCoinsDatabase>().query(r'id == $0', [widget.id]).isNotEmpty;
 
     _dataFuture = fetchData();
   }
@@ -68,8 +64,7 @@ class _CoinWidgetState extends State<CoinWidget> {
   Future fetchData() async {
     _coin = await CoinApi.getCoin(widget.id);
 
-    _highLowPercentage =
-        (100 * ((_coin.price - _coin.low) / (_coin.high - _coin.low))).round();
+    _highLowPercentage = (100 * ((_coin.price - _coin.low) / (_coin.high - _coin.low))).round();
     if (_highLowPercentage > 100) {
       _highLowPercentage = 100;
     } else if (_highLowPercentage < 0) {
@@ -95,13 +90,10 @@ class _CoinWidgetState extends State<CoinWidget> {
             }),
           ),
           IconButton(
-            icon: Icon(_isFav ? Icons.favorite : Icons.favorite_border,
-                color: Colors.red),
+            icon: Icon(_isFav ? Icons.favorite : Icons.favorite_border, color: Colors.red),
             onPressed: () {
               if (_isFav) {
-                realm.write(() => realm.deleteMany(realm
-                    .all<FavoriteCoinsDatabase>()
-                    .query(r'id == $0', [widget.id])));
+                realm.write(() => realm.deleteMany(realm.all<FavoriteCoinsDatabase>().query(r'id == $0', [widget.id])));
               } else {
                 realm.write(() => realm.add(FavoriteCoinsDatabase(widget.id)));
               }
@@ -125,7 +117,7 @@ class _CoinWidgetState extends State<CoinWidget> {
       body: FutureBuilder(
         future: _dataFuture,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.connectionState == flutter_async.ConnectionState.done) {
             return ListView(
               padding: const EdgeInsets.only(left: 15, right: 15),
               physics: const BouncingScrollPhysics(),
@@ -149,9 +141,7 @@ class _CoinWidgetState extends State<CoinWidget> {
                         Text(
                           '${_coin.priceChangePercentage24h.toStringAsFixed(2)}%',
                           style: TextStyle(
-                            color: (_coin.priceChangePercentage24h < 0
-                                ? Colors.red
-                                : Colors.green),
+                            color: (_coin.priceChangePercentage24h < 0 ? Colors.red : Colors.green),
                           ),
                         ),
                       ],
@@ -174,9 +164,7 @@ class _CoinWidgetState extends State<CoinWidget> {
                         Text(
                           '${_coin.marketCapChangePercentage24h.toStringAsFixed(2)}%',
                           style: TextStyle(
-                            color: (_coin.marketCapChangePercentage24h < 0
-                                ? Colors.red
-                                : Colors.green),
+                            color: (_coin.marketCapChangePercentage24h < 0 ? Colors.red : Colors.green),
                           ),
                         ),
                       ],

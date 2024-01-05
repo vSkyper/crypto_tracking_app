@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:crypto_tracking_app/models/global_data.dart';
+import 'package:crypto_tracking/models/global_data.dart';
 import 'package:http/http.dart' as http;
 
 class GlobalDataApi {

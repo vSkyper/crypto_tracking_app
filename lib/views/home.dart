@@ -1,10 +1,10 @@
-import 'package:crypto_tracking_app/models/coins.api.dart';
-import 'package:crypto_tracking_app/models/coins.dart';
-import 'package:crypto_tracking_app/models/global_data.api.dart';
-import 'package:crypto_tracking_app/models/global_data.dart';
-import 'package:crypto_tracking_app/views/favorite_coins.dart';
-import 'package:crypto_tracking_app/views/widgets/coin_card.dart';
-import 'package:crypto_tracking_app/views/widgets/global_data_widget.dart';
+import 'package:crypto_tracking/models/coins.api.dart';
+import 'package:crypto_tracking/models/coins.dart';
+import 'package:crypto_tracking/models/global_data.api.dart';
+import 'package:crypto_tracking/models/global_data.dart';
+import 'package:crypto_tracking/views/favorite_coins.dart';
+import 'package:crypto_tracking/views/widgets/coin_card.dart';
+import 'package:crypto_tracking/views/widgets/global_data_widget.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -29,8 +29,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> fetchData() async {
-    List responses =
-        await Future.wait([GlobalDataApi.getGlobalData(), CoinsApi.getCoins()]);
+    List responses = await Future.wait([GlobalDataApi.getGlobalData(), CoinsApi.getCoins()]);
     _globalData = responses[0];
     _coins = responses[1];
     _searchedCoins = _coins;
@@ -39,10 +38,7 @@ class _HomePageState extends State<HomePage> {
 
   void searchCoins(String value) {
     setState(() {
-      _searchedCoins = _coins
-          .where(
-              (item) => item.name.toLowerCase().contains(value.toLowerCase()))
-          .toList();
+      _searchedCoins = _coins.where((item) => item.name.toLowerCase().contains(value.toLowerCase())).toList();
     });
   }
 
@@ -70,8 +66,8 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ],
-        title: Row(
-          children: const [
+        title: const Row(
+          children: [
             Icon(Icons.euro),
             SizedBox(width: 10),
             Text('Cryptocurrency'),
@@ -147,10 +143,8 @@ class _HomePageState extends State<HomePage> {
                                 id: _searchedCoins[index].id,
                                 name: _searchedCoins[index].name,
                                 symbol: _searchedCoins[index].symbol,
-                                currentPrice:
-                                    _searchedCoins[index].currentPrice,
-                                priceChangePercentage24h: _searchedCoins[index]
-                                    .priceChangePercentage24h,
+                                currentPrice: _searchedCoins[index].currentPrice,
+                                priceChangePercentage24h: _searchedCoins[index].priceChangePercentage24h,
                                 image: _searchedCoins[index].image,
                                 rank: _searchedCoins[index].rank,
                               );

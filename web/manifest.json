@@ -1,6 +1,6 @@
 {
-    "name": "crypto_tracking_app",
-    "short_name": "crypto_tracking_app",
+    "name": "crypto_tracking",
+    "short_name": "crypto_tracking",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

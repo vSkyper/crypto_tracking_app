@@ -1,5 +1,5 @@
-import 'package:crypto_tracking_app/models/ohlc.api.dart';
-import 'package:crypto_tracking_app/models/ohlc.dart';
+import 'package:crypto_tracking/models/ohlc.api.dart';
+import 'package:crypto_tracking/models/ohlc.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'dart:math';
@@ -71,8 +71,7 @@ class _OhlcWidgetState extends State<OhlcWidget> {
                   enable: true,
                   activationMode: ActivationMode.singleTap,
                   tooltipSettings: const InteractiveTooltip(
-                    format:
-                        'Date: point.x\nHigh: point.high\nLow: point.low\nOpen: point.open\nClose: point.close',
+                    format: 'Date: point.x\nHigh: point.high\nLow: point.low\nOpen: point.open\nClose: point.close',
                   ),
                 ),
                 series: [

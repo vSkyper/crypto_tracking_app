@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:crypto_tracking_app/models/ohlc.dart';
+import 'package:crypto_tracking/models/ohlc.dart';
 import 'package:http/http.dart' as http;
 
 class OhlcApi {

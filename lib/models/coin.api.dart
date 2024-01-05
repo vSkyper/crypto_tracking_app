@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:crypto_tracking_app/models/coin.dart';
+import 'package:crypto_tracking/models/coin.dart';
 import 'package:http/http.dart' as http;
 
 class CoinApi {
